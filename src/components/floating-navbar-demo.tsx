@@ -6,12 +6,17 @@ import { IconHome, IconInfoCircle, IconWorld, IconMessage2, IconCamera } from "@
 export default function FloatingNavDemo({ onLaunchApp }: { onLaunchApp: () => void }) {
   const navItems = [
     {
-      name: "How It Works",
-      link: "#how-it-works",
+      name: "The Crisis",
+      link: "#human-crisis",
       icon: <IconInfoCircle className="h-4 w-4" />,
     },
     {
-      name: "Safety Rules",
+      name: "How It Works",
+      link: "#how-it-works",
+      icon: <IconHome className="h-4 w-4" />,
+    },
+    {
+      name: "Architecture",
       link: "#safety-engine",
       icon: <IconHome className="h-4 w-4" />,
     },

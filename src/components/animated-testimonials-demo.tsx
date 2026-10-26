@@ -10,28 +10,28 @@ export default function AnimatedTestimonialsDemo() {
         "At 2 AM when my daughter had an acute breathless episode, panic gripped my house. I didn't know which inhaler was safe. MedSure's voice spoke in Nigerian Pidgin, told me to sit her upright and keep her calm while explaining what the active ingredient does. It prevented pure tragedy.",
       name: "Amaka Okafor",
       designation: "Mother & Caregiver in Agege, Lagos",
-      src: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=1000&auto=format&fit=crop",
+      src: "https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?q=80&w=1000&auto=format&fit=crop",
     },
     {
       quote:
         "In our community pharmacy here in Osun, over 30% of medicines brought in from patent stores have dubious NAFDAC numbers or faded expiry dates. MedSure's code-level guardrail catches expired packs instantly, and the clinical queue lets me review flagged drugs remotely.",
       name: "Pharm. Tunde Balogun",
       designation: "Registered Community Pharmacist, Ile-Ife",
-      src: "https://images.unsplash.com/photo-1622253692010-333f2da6031d?q=80&w=1000&auto=format&fit=crop",
+      src: "https://images.unsplash.com/photo-1622902046580-2b47f47f5471?q=80&w=1000&auto=format&fit=crop",
     },
     {
       quote:
         "I cannot read the tiny English writing on medicine packages. When I got malaria, MedSure read the pack and explained the exact dosage in Hausa. It warned me not to mix it with another painkiller that my local chemist recommended.",
       name: "Mallam Musa Ibrahim",
       designation: "Small Business Trader, Kano",
-      src: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=1000&auto=format&fit=crop",
+      src: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?q=80&w=1000&auto=format&fit=crop",
     },
     {
       quote:
         "In the riverine delta, we deal with severe allergic skin eruptions because patients don't realize generic brands contain Sulfas or NSAIDs. MedSure's prominent allergy warning badge is a breakthrough for preventative medicine in Africa.",
       name: "Dr. Ngozi Eze",
       designation: "Clinical Medical Officer, Delta State",
-      src: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?q=80&w=1000&auto=format&fit=crop",
+      src: "https://images.unsplash.com/photo-1559839734-2b71ea197ec2?q=80&w=1000&auto=format&fit=crop",
     },
   ];
 

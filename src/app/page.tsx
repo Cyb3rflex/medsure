@@ -141,15 +141,17 @@ export default function Home() {
 
   return (
     <div className="flex-1 flex flex-col">
-      {/* Global Navigation Header */}
-      <Header
-        currentLanguage={currentLanguage}
-        onLanguageChange={setCurrentLanguage}
-        activeTab={activeTab}
-        onTabChange={setActiveTab}
-        flaggedCount={pharmacistQueue.filter(q => q.status === 'pending').length}
-        cabinetCount={cabinet.length}
-      />
+      {/* Global Navigation Header: Only shown inside clinical app tabs. Story tab uses the Aceternity Floating Navbar */}
+      {activeTab !== 'story' && (
+        <Header
+          currentLanguage={currentLanguage}
+          onLanguageChange={setCurrentLanguage}
+          activeTab={activeTab}
+          onTabChange={setActiveTab}
+          flaggedCount={pharmacistQueue.filter(q => q.status === 'pending').length}
+          cabinetCount={cabinet.length}
+        />
+      )}
 
       {/* Tab 0: Inbuilt 3D Story Landing Page */}
       {activeTab === 'story' && (

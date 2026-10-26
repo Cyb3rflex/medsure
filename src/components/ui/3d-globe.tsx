@@ -322,7 +322,7 @@ function Scene({ markers, config, onMarkerClick, onMarkerHover }: SceneProps) {
   const { camera } = useThree();
 
   React.useEffect(() => {
-    camera.position.set(0, 0, config.radius * 3.5);
+    camera.position.set(0, 0, config.radius * 3.0);
     camera.lookAt(0, 0, 0);
   }, [camera, config.radius]);
 
@@ -386,26 +386,26 @@ function LoadingFallback() {
 }
 
 const defaultConfig: Required<Globe3DConfig> = {
-  radius: 2,
+  radius: 2.35,
   globeColor: "#090d16",
   textureUrl: DEFAULT_EARTH_TEXTURE,
   bumpMapUrl: DEFAULT_BUMP_TEXTURE,
   showAtmosphere: true,
   atmosphereColor: "#10b981",
-  atmosphereIntensity: 0.6,
+  atmosphereIntensity: 0.75,
   atmosphereBlur: 2,
-  bumpScale: 1.5,
-  autoRotateSpeed: 0.35,
+  bumpScale: 1.8,
+  autoRotateSpeed: 0.85,
   enableZoom: false,
   enablePan: false,
   minDistance: 5,
   maxDistance: 15,
   initialRotation: { x: 0, y: 0 },
-  markerSize: 0.06,
+  markerSize: 0.07,
   showWireframe: false,
   wireframeColor: "#34d399",
-  ambientIntensity: 0.7,
-  pointLightIntensity: 1.6,
+  ambientIntensity: 0.75,
+  pointLightIntensity: 1.8,
   backgroundColor: null,
 };
 

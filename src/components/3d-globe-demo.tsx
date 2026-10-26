@@ -78,14 +78,14 @@ export default function Globe3DDemo() {
         </div>
 
         {/* 3D Globe Canvas Container */}
-        <div className="relative mt-4 w-full h-[460px] md:h-[520px] flex items-center justify-center">
+        <div className="relative mt-4 w-full h-[540px] md:h-[640px] flex items-center justify-center">
           <Globe3D
             markers={medicalMarkers}
             config={{
               atmosphereColor: "#10b981",
-              atmosphereIntensity: 0.7,
-              bumpScale: 1.8,
-              autoRotateSpeed: 0.35,
+              atmosphereIntensity: 0.8,
+              bumpScale: 2.0,
+              autoRotateSpeed: 0.85,
             }}
             onMarkerClick={(marker) => {
               setActivePin(marker.label || "Selected medical hub");
