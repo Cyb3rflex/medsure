@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import './globals.css';
 
 export const metadata: Metadata = {
-  metadataBase: new URL('https://medsure-africa.vercel.app'),
+  metadataBase: new URL('https://medsure-five.vercel.app'),
   title: {
     default: 'MedSure Nigeria — Open AI Medicine Verification & Multilingual Voice Safety',
     template: '%s | MedSure Africa'
@@ -37,7 +37,7 @@ export const metadata: Metadata = {
     title: 'MedSure — Zero-Hallucination Medicine Verification & Multilingual Audio for Africa',
     description:
       'Never take the wrong medicine again. 5-second camera scan checks NAFDAC registration, expiry dates, and cross-drug reactions with spoken audio explanations in Nigerian indigenous languages.',
-    url: 'https://medsure-africa.vercel.app',
+    url: 'https://medsure-five.vercel.app',
     siteName: 'MedSure Nigeria',
     locale: 'en_NG',
     type: 'website',
@@ -86,15 +86,15 @@ export const metadata: Metadata = {
     },
   },
   alternates: {
-    canonical: 'https://medsure-africa.vercel.app',
+    canonical: 'https://medsure-five.vercel.app',
     languages: {
-      'en-NG': 'https://medsure-africa.vercel.app',
-      'yo-NG': 'https://medsure-africa.vercel.app?lang=yo',
-      'ha-NG': 'https://medsure-africa.vercel.app?lang=ha',
-      'ig-NG': 'https://medsure-africa.vercel.app?lang=ig',
-      'pcm-NG': 'https://medsure-africa.vercel.app?lang=pcm',
-      'sw-KE': 'https://medsure-africa.vercel.app?lang=sw',
-      'fr-SN': 'https://medsure-africa.vercel.app?lang=fr',
+      'en-NG': 'https://medsure-five.vercel.app',
+      'yo-NG': 'https://medsure-five.vercel.app?lang=yo',
+      'ha-NG': 'https://medsure-five.vercel.app?lang=ha',
+      'ig-NG': 'https://medsure-five.vercel.app?lang=ig',
+      'pcm-NG': 'https://medsure-five.vercel.app?lang=pcm',
+      'sw-KE': 'https://medsure-five.vercel.app?lang=sw',
+      'fr-SN': 'https://medsure-five.vercel.app?lang=fr',
     },
   },
 };
@@ -109,7 +109,7 @@ export default function RootLayout({
     '@context': 'https://schema.org',
     '@type': 'MedicalWebPage',
     name: 'MedSure Nigeria — Medicine Safety & Multilingual Verification',
-    url: 'https://medsure-africa.vercel.app',
+    url: 'https://medsure-five.vercel.app',
     description:
       'Open-source AI-assisted medicine verification system built with deterministic safety guardrails, NAFDAC verification, and indigenous language voice synthesis for Africa.',
     inLanguage: ['en', 'yo', 'ha', 'ig', 'pcm', 'sw', 'fr'],

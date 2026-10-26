@@ -57,6 +57,20 @@ export const BackgroundBeams = React.memo(
       "M-44 -573C-44 -573 24 -168 488 -41C952 86 1020 491 1020 491",
       "M-37 -581C-37 -581 31 -176 495 -49C959 78 1027 483 1027 483",
     ];
+    const [isMobile, setIsMobile] = React.useState(false);
+
+    React.useEffect(() => {
+      const checkMobile = () => setIsMobile(window.innerWidth < 768);
+      checkMobile();
+      window.addEventListener("resize", checkMobile, { passive: true });
+      return () => window.removeEventListener("resize", checkMobile);
+    }, []);
+
+    // On mobile, render an optimized subset of paths to eliminate CPU throttling
+    const activePaths = React.useMemo(() => {
+      return isMobile ? paths.filter((_, i) => i % 4 === 0) : paths.filter((_, i) => i % 2 === 0);
+    }, [isMobile]);
+
     return (
       <div
         className={cn(
@@ -80,7 +94,7 @@ export const BackgroundBeams = React.memo(
             strokeWidth="0.75"
           ></path>
 
-          {paths.map((path, index) => (
+          {activePaths.map((path, index) => (
             <motion.path
               key={`path-` + index}
               d={path}
@@ -90,7 +104,7 @@ export const BackgroundBeams = React.memo(
             ></motion.path>
           ))}
           <defs>
-            {paths.map((path, index) => (
+            {activePaths.map((path, index) => (
               <motion.linearGradient
                 id={`linearGradient-${index}`}
                 key={`gradient-${index}` }

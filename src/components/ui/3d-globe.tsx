@@ -79,6 +79,10 @@ interface MarkerProps {
   onHover?: (marker: GlobeMarker | null) => void;
 }
 
+const _tempWorldPos = new THREE.Vector3();
+const _tempMarkerDir = new THREE.Vector3();
+const _tempCamDir = new THREE.Vector3();
+
 function Marker({
   marker,
   radius,
@@ -88,6 +92,8 @@ function Marker({
 }: MarkerProps) {
   const [hovered, setHovered] = useState(false);
   const [isVisible, setIsVisible] = useState(true);
+  const isVisibleRef = useRef(true);
+  const frameCount = useRef(Math.floor(Math.random() * 3));
   const groupRef = useRef<THREE.Group>(null);
   const { camera } = useThree();
 
@@ -102,16 +108,20 @@ function Marker({
   const lineHeight = topPosition.distanceTo(surfacePosition);
 
   useFrame(() => {
+    frameCount.current++;
+    if (frameCount.current % 3 !== 0) return;
     if (!groupRef.current) return;
-    const worldPos = new THREE.Vector3();
-    groupRef.current.getWorldPosition(worldPos);
 
-    // Front-facing occlusion test
-    const markerDirection = worldPos.clone().normalize();
-    const cameraDirection = camera.position.clone().normalize();
-    const dot = markerDirection.dot(cameraDirection);
+    groupRef.current.getWorldPosition(_tempWorldPos);
+    _tempMarkerDir.copy(_tempWorldPos).normalize();
+    _tempCamDir.copy(camera.position).normalize();
+    const dot = _tempMarkerDir.dot(_tempCamDir);
 
-    setIsVisible(dot > -0.05);
+    const newVisible = dot > -0.05;
+    if (newVisible !== isVisibleRef.current) {
+      isVisibleRef.current = newVisible;
+      setIsVisible(newVisible);
+    }
   });
 
   const handlePointerEnter = useCallback((e?: any) => {
@@ -388,12 +398,15 @@ interface SceneProps {
 }
 
 function Scene({ markers, config, onMarkerClick, onMarkerHover }: SceneProps) {
-  const { camera } = useThree();
+  const { camera, size } = useThree();
 
   React.useEffect(() => {
-    camera.position.set(0, 0, config.radius * 3.0);
+    // Dynamically scale camera distance for mobile so globe fits beautifully
+    const isMobile = size.width < 640;
+    const distanceMult = isMobile ? 3.7 : 2.95;
+    camera.position.set(0, 0, config.radius * distanceMult);
     camera.lookAt(0, 0, 0);
-  }, [camera, config.radius]);
+  }, [camera, config.radius, size.width]);
 
   return (
     <>
@@ -491,14 +504,14 @@ export function Globe3D({
   );
 
   return (
-    <div className={cn("relative w-full h-[380px] sm:h-[480px] md:h-[600px]", className)}>
+    <div className={cn("relative w-full h-[270px] sm:h-[370px] md:h-[500px]", className)}>
       <Canvas
         gl={{
           antialias: true,
           alpha: true,
           powerPreference: "high-performance",
         }}
-        dpr={[1, 1.5]}
+        dpr={typeof window !== "undefined" && window.innerWidth < 768 ? [1, 1.25] : [1, 1.5]}
         camera={{
           fov: 45,
           near: 0.1,
@@ -508,6 +521,7 @@ export function Globe3D({
         style={{
           background: mergedConfig.backgroundColor || "transparent",
           pointerEvents: "auto",
+          touchAction: "pan-y",
         }}
       >
         <Suspense fallback={<LoadingFallback />}>

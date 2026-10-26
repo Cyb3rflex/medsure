@@ -271,7 +271,7 @@ export default function Globe3DDemo({ onLaunchApp }: { onLaunchApp?: () => void 
         </div>
 
         {/* 3D Globe Canvas Container */}
-        <div className="relative mt-2 w-full h-[380px] sm:h-[480px] md:h-[600px] flex items-center justify-center">
+        <div className="relative mt-2 w-full h-[270px] sm:h-[370px] md:h-[500px] flex items-center justify-center">
           <Globe3D
             markers={AFRICAN_MEDICAL_HUBS}
             config={{

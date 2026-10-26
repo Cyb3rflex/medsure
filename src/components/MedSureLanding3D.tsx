@@ -56,28 +56,40 @@ export default function MedSureLanding3D({ onOpenApp }: MedSureLanding3DProps) {
 
     sections.forEach((sec) => revealObserver.observe(sec));
 
+    let scrollScheduled = false;
     function onScroll() {
-      const innerH = window.innerHeight || 1;
+      if (scrollScheduled) return;
+      scrollScheduled = true;
+      requestAnimationFrame(() => {
+        scrollScheduled = false;
+        const innerH = window.innerHeight || 1;
 
-      for (let i = 0; i < parallaxEls.length; i++) {
-        const el = parallaxEls[i] as HTMLElement;
-        const sec = el.closest('section');
-        if (!sec) continue;
-        const rect = sec.getBoundingClientRect();
-        const p = -rect.top / innerH;
-        const speed = parseFloat(el.getAttribute('data-speed') || '0');
-        const rot = parseFloat(el.getAttribute('data-rot') || '0');
-        el.style.transform = `translate3d(0, ${p * speed * innerH}px, 0) rotate(${p * rot}deg)`;
-      }
+        for (let i = 0; i < parallaxEls.length; i++) {
+          const el = parallaxEls[i] as HTMLElement;
+          const sec = el.closest('section');
+          if (!sec) continue;
+          const rect = sec.getBoundingClientRect();
+          const p = -rect.top / innerH;
+          const speed = parseFloat(el.getAttribute('data-speed') || '0');
+          const rot = parseFloat(el.getAttribute('data-rot') || '0');
+          el.style.transform = `translate3d(0, ${p * speed * innerH}px, 0) rotate(${p * rot}deg)`;
+        }
+      });
     }
 
     window.addEventListener('scroll', onScroll, { passive: true });
     window.addEventListener('resize', onScroll);
     onScroll();
 
-    // 1. Three.js Scene Setup
-    const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    // 1. Three.js Scene Setup (Optimized for Mobile Battery & Frame Rate)
+    const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
+    const renderer = new THREE.WebGLRenderer({ 
+      canvas, 
+      antialias: !isMobile, 
+      alpha: true,
+      powerPreference: 'high-performance'
+    });
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, isMobile ? 1.25 : 1.5));
     renderer.setSize(window.innerWidth, window.innerHeight, false);
     renderer.outputColorSpace = THREE.SRGBColorSpace;
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
@@ -114,24 +126,37 @@ export default function MedSureLanding3D({ onOpenApp }: MedSureLanding3DProps) {
     const capsuleRoot = new THREE.Group();
     flight.add(capsuleRoot);
 
-    const emeraldMat = new THREE.MeshPhysicalMaterial({
-      color: 0x10b981,
-      roughness: 0.14,
-      metalness: 0.08,
-      clearcoat: 1.0,
-      clearcoatRoughness: 0.06,
-      transmission: 0.25,
-      ior: 1.52,
-      thickness: 0.5
-    });
+    // Optimized materials: On mobile, use high-speed MeshStandardMaterial to avoid expensive depth-buffer readbacks
+    const emeraldMat = isMobile
+      ? new THREE.MeshStandardMaterial({
+          color: 0x10b981,
+          roughness: 0.22,
+          metalness: 0.12,
+        })
+      : new THREE.MeshPhysicalMaterial({
+          color: 0x10b981,
+          roughness: 0.14,
+          metalness: 0.08,
+          clearcoat: 0.8,
+          clearcoatRoughness: 0.08,
+          transmission: 0.18,
+          ior: 1.52,
+          thickness: 0.4
+        });
 
-    const whiteMat = new THREE.MeshPhysicalMaterial({
-      color: 0xffffff,
-      roughness: 0.14,
-      metalness: 0.04,
-      clearcoat: 0.95,
-      clearcoatRoughness: 0.08
-    });
+    const whiteMat = isMobile
+      ? new THREE.MeshStandardMaterial({
+          color: 0xffffff,
+          roughness: 0.18,
+          metalness: 0.06,
+        })
+      : new THREE.MeshPhysicalMaterial({
+          color: 0xffffff,
+          roughness: 0.14,
+          metalness: 0.04,
+          clearcoat: 0.8,
+          clearcoatRoughness: 0.08
+        });
 
     const goldRingMat = new THREE.MeshStandardMaterial({
       color: 0xf59e0b,
@@ -351,6 +376,7 @@ export default function MedSureLanding3D({ onOpenApp }: MedSureLanding3DProps) {
 
       if (activeScale < 0.03) {
         flight.visible = false;
+        return; // Skip GPU render calls when pill is offscreen or hidden
       } else {
         flight.visible = true;
         flight.scale.setScalar(halfH * 2 * 0.17 * activeScale);

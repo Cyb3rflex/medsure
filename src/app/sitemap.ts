@@ -1,7 +1,7 @@
 import { MetadataRoute } from 'next';
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const baseUrl = 'https://medsure-africa.vercel.app';
+  const baseUrl = 'https://medsure-five.vercel.app';
   const lastModified = new Date();
 
   return [
