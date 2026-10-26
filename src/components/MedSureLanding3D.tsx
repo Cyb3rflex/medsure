@@ -138,18 +138,18 @@ export default function MedSureLanding3D({ onOpenApp }: MedSureLanding3DProps) {
       metalness: 0.88
     });
 
-    // Well-balanced capsule geometry
-    const capsuleHalfLength = 0.42;
-    const capsuleRadius = 0.45;
+    // Compact, refined capsule geometry (scaled down so it never crowds content)
+    const capsuleHalfLength = 0.28;
+    const capsuleRadius = 0.28;
 
     // Top Dome & Cylinder (Emerald Green)
     const topGroup = new THREE.Group();
-    const topCylGeom = new THREE.CylinderGeometry(capsuleRadius, capsuleRadius, capsuleHalfLength, 36, 1, true);
+    const topCylGeom = new THREE.CylinderGeometry(capsuleRadius, capsuleRadius, capsuleHalfLength, 32, 1, true);
     topCylGeom.translate(0, capsuleHalfLength / 2, 0);
     const topCyl = new THREE.Mesh(topCylGeom, emeraldMat);
     topGroup.add(topCyl);
 
-    const topDomeGeom = new THREE.SphereGeometry(capsuleRadius, 36, 18, 0, Math.PI * 2, 0, Math.PI / 2);
+    const topDomeGeom = new THREE.SphereGeometry(capsuleRadius, 32, 16, 0, Math.PI * 2, 0, Math.PI / 2);
     topDomeGeom.translate(0, capsuleHalfLength, 0);
     const topDome = new THREE.Mesh(topDomeGeom, emeraldMat);
     topGroup.add(topDome);
@@ -157,19 +157,19 @@ export default function MedSureLanding3D({ onOpenApp }: MedSureLanding3DProps) {
 
     // Bottom Dome & Cylinder (White Porcelain)
     const botGroup = new THREE.Group();
-    const botCylGeom = new THREE.CylinderGeometry(capsuleRadius, capsuleRadius, capsuleHalfLength, 36, 1, true);
+    const botCylGeom = new THREE.CylinderGeometry(capsuleRadius, capsuleRadius, capsuleHalfLength, 32, 1, true);
     botCylGeom.translate(0, -capsuleHalfLength / 2, 0);
     const botCyl = new THREE.Mesh(botCylGeom, whiteMat);
     botGroup.add(botCyl);
 
-    const botDomeGeom = new THREE.SphereGeometry(capsuleRadius, 36, 18, 0, Math.PI * 2, Math.PI / 2, Math.PI / 2);
+    const botDomeGeom = new THREE.SphereGeometry(capsuleRadius, 32, 16, 0, Math.PI * 2, Math.PI / 2, Math.PI / 2);
     botDomeGeom.translate(0, -capsuleHalfLength, 0);
     const botDome = new THREE.Mesh(botDomeGeom, whiteMat);
     botGroup.add(botDome);
     capsuleRoot.add(botGroup);
 
     // Central Seam Ring
-    const seamGeom = new THREE.TorusGeometry(capsuleRadius * 1.018, 0.03, 16, 64);
+    const seamGeom = new THREE.TorusGeometry(capsuleRadius * 1.018, 0.02, 16, 48);
     seamGeom.rotateX(Math.PI / 2);
     const seamMesh = new THREE.Mesh(seamGeom, goldRingMat);
     capsuleRoot.add(seamMesh);
@@ -177,22 +177,22 @@ export default function MedSureLanding3D({ onOpenApp }: MedSureLanding3DProps) {
     // Clinical Cross Emblem on the face
     const crossGroup = new THREE.Group();
     const crossMat = new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.95 });
-    const barVGeom = new THREE.BoxGeometry(0.06, 0.22, 0.04);
-    const barHGeom = new THREE.BoxGeometry(0.22, 0.06, 0.04);
+    const barVGeom = new THREE.BoxGeometry(0.04, 0.15, 0.03);
+    const barHGeom = new THREE.BoxGeometry(0.15, 0.04, 0.03);
     crossGroup.add(new THREE.Mesh(barVGeom, crossMat));
     crossGroup.add(new THREE.Mesh(barHGeom, crossMat));
-    crossGroup.position.set(0, capsuleHalfLength * 0.52, capsuleRadius * 0.97);
+    crossGroup.position.set(0, capsuleHalfLength * 0.5, capsuleRadius * 0.97);
     capsuleRoot.add(crossGroup);
 
-    // Orbiting Medical Shield Rings
-    const ring1Geom = new THREE.TorusGeometry(1.05, 0.014, 16, 80);
+    // Orbiting Medical Shield Rings (Compact)
+    const ring1Geom = new THREE.TorusGeometry(0.72, 0.010, 16, 64);
     const ring1Mat = new THREE.MeshBasicMaterial({ color: 0x34d399, transparent: true, opacity: 0.6 });
     const ring1 = new THREE.Mesh(ring1Geom, ring1Mat);
     ring1.rotation.x = Math.PI / 3;
     ring1.rotation.y = Math.PI / 6;
     capsuleRoot.add(ring1);
 
-    const ring2Geom = new THREE.TorusGeometry(1.28, 0.012, 16, 80);
+    const ring2Geom = new THREE.TorusGeometry(0.90, 0.008, 16, 64);
     const ring2Mat = new THREE.MeshBasicMaterial({ color: 0x38bdf8, transparent: true, opacity: 0.45 });
     const ring2 = new THREE.Mesh(ring2Geom, ring2Mat);
     ring2.rotation.x = -Math.PI / 4;
@@ -200,18 +200,18 @@ export default function MedSureLanding3D({ onOpenApp }: MedSureLanding3DProps) {
     capsuleRoot.add(ring2);
 
     // Subtle floating sparkles
-    const particleCount = 40;
+    const particleCount = 30;
     const particleGeom = new THREE.BufferGeometry();
     const particlePos = new Float32Array(particleCount * 3);
     for (let i = 0; i < particleCount * 3; i += 3) {
-      particlePos[i] = (Math.random() - 0.5) * 3.8;
-      particlePos[i + 1] = (Math.random() - 0.5) * 3.8;
-      particlePos[i + 2] = (Math.random() - 0.5) * 3.0;
+      particlePos[i] = (Math.random() - 0.5) * 2.5;
+      particlePos[i + 1] = (Math.random() - 0.5) * 2.5;
+      particlePos[i + 2] = (Math.random() - 0.5) * 2.0;
     }
     particleGeom.setAttribute('position', new THREE.BufferAttribute(particlePos, 3));
     const particleMat = new THREE.PointsMaterial({
       color: 0x6ee7b7,
-      size: 0.05,
+      size: 0.04,
       transparent: true,
       opacity: 0.7,
       blending: THREE.AdditiveBlending
@@ -221,23 +221,24 @@ export default function MedSureLanding3D({ onOpenApp }: MedSureLanding3DProps) {
 
     canvas.classList.add('ready');
 
-    // 4. Narrative-Driven Camera Trajectory: Pill travels and orients organically with the page story
+    // 4. Safe Trajectory: Kept strictly on the right side gutter, never overlapping text lines
+    // Crucially: keyframe 4 scales to 0.0 so the pill completely vanishes before the 3D globe!
     const K_DESKTOP = [
-      { x: 0.28, y: -0.02, s: 0.95, yaw: 35, pitch: -10, roll: 20 },   // 0. Hero: floating alongside headline
-      { x: -0.28, y: -0.05, s: 0.90, yaw: -45, pitch: 15, roll: -15 }, // 1. Human Crisis: slides to left facing text
-      { x: 0.26, y: -0.08, s: 0.92, yaw: 110, pitch: -5, roll: 15 },  // 2. 3-Step Scan: slides to right aligning with viewfinder
-      { x: -0.26, y: 0.04, s: 0.88, yaw: 180, pitch: 20, roll: -10 },  // 3. Technical Architecture: reveals medical emblem
-      { x: 0.25, y: -0.05, s: 0.85, yaw: 260, pitch: -10, roll: 20 }, // 4. African Health Globe: hovers alongside globe
-      { x: 0.0, y: -0.18, s: 0.80, yaw: 360, pitch: 0, roll: 10 }      // 5. Testimonials & Footer
+      { x: 0.38, y: -0.02, s: 0.85, yaw: 35, pitch: -10, roll: 20 },   // 0. Hero: open right margin
+      { x: 0.40, y: -0.06, s: 0.80, yaw: -30, pitch: 15, roll: -15 },  // 1. Human Crisis: safe right gutter
+      { x: 0.38, y: -0.04, s: 0.82, yaw: 90, pitch: -5, roll: 15 },   // 2. 3-Step Scan: safe right gutter
+      { x: 0.40, y: 0.02, s: 0.78, yaw: 180, pitch: 15, roll: -10 },  // 3. Technical Architecture: safe right gutter
+      { x: 0.45, y: -0.10, s: 0.0, yaw: 260, pitch: 0, roll: 0 },     // 4. Disappears completely before 3D Globe!
+      { x: 0.0, y: 0.22, s: 0.70, yaw: 360, pitch: 0, roll: 10 }      // 5. Reappears at bottom CTA card
     ];
 
     const K_MOBILE = [
-      { x: 0.0, y: 0.26, s: 0.55, yaw: 35, pitch: -10, roll: 20 },
-      { x: 0.0, y: 0.26, s: 0.52, yaw: -45, pitch: 15, roll: -15 },
-      { x: 0.0, y: 0.26, s: 0.52, yaw: 110, pitch: -5, roll: 15 },
-      { x: 0.0, y: 0.26, s: 0.50, yaw: 180, pitch: 20, roll: -10 },
-      { x: 0.0, y: 0.26, s: 0.48, yaw: 260, pitch: -10, roll: 20 },
-      { x: 0.0, y: 0.26, s: 0.45, yaw: 360, pitch: 0, roll: 10 }
+      { x: 0.0, y: 0.38, s: 0.35, yaw: 35, pitch: -10, roll: 20 },
+      { x: 0.0, y: 0.38, s: 0.30, yaw: -30, pitch: 15, roll: -15 },
+      { x: 0.0, y: 0.38, s: 0.30, yaw: 90, pitch: -5, roll: 15 },
+      { x: 0.0, y: 0.38, s: 0.28, yaw: 180, pitch: 15, roll: -10 },
+      { x: 0.0, y: 0.38, s: 0.0, yaw: 260, pitch: 0, roll: 0 },       // Disappears completely before 3D Globe!
+      { x: 0.0, y: 0.35, s: 0.30, yaw: 360, pitch: 0, roll: 10 }
     ];
 
     function ease(t: number) {
@@ -262,7 +263,7 @@ export default function MedSureLanding3D({ onOpenApp }: MedSureLanding3DProps) {
       const i = Math.min(K.length - 2, Math.floor(p));
       const f = p - i;
       const t = ease(Math.max(0, Math.min(1, (f - 0.1) / 0.8)));
-      const dive = Math.sin(t * Math.PI) * -0.12;
+      const dive = Math.sin(t * Math.PI) * -0.06;
 
       const k0 = K[i];
       const k1 = K[i + 1];
@@ -270,7 +271,7 @@ export default function MedSureLanding3D({ onOpenApp }: MedSureLanding3DProps) {
       return {
         x: lerp(k0.x, k1.x, t),
         y: lerp(k0.y, k1.y, t) + dive,
-        s: lerp(k0.s, k1.s, t) * (1 + Math.sin(t * Math.PI) * 0.06),
+        s: lerp(k0.s, k1.s, t),
         yaw: lerpAngle(k0.yaw, k1.yaw, t),
         pitch: lerp(k0.pitch, k1.pitch, t),
         roll: lerp(k0.roll, k1.roll, t)
@@ -278,7 +279,7 @@ export default function MedSureLanding3D({ onOpenApp }: MedSureLanding3DProps) {
     }
 
     const clock = new THREE.Clock();
-    const cur = { x: 0.28, y: -0.02, s: 0.95, yaw: 35, pitch: -10, roll: 20 };
+    const cur = { x: 0.38, y: -0.02, s: 0.85, yaw: 35, pitch: -10, roll: 20 };
     const mouse = { x: 0, y: 0, sx: 0, sy: 0 };
 
     const handlePointerMove = (e: MouseEvent) => {
@@ -321,24 +322,46 @@ export default function MedSureLanding3D({ onOpenApp }: MedSureLanding3DProps) {
       const fovRad = (camera.fov * Math.PI) / 180;
       const halfH = Math.tan(fovRad / 2) * camera.position.z;
       const halfW = halfH * camera.aspect;
-      const hover = Math.sin(t * 1.8) * 0.035 + Math.cos(t * 2.5) * 0.012;
+      const hover = Math.sin(t * 1.8) * 0.025 + Math.cos(t * 2.5) * 0.01;
+
+      // Safe coordinate bounds to prevent text collision
+      const safeX = Math.max(0.35, cur.x);
 
       flight.position.set(
-        cur.x * halfW + mouse.sx * 0.12,
-        cur.y * halfH + hover * halfH * 0.38 + mouse.sy * 0.1,
-        Math.sin(t * 0.8) * 0.1
+        (window.innerWidth < 768 ? cur.x : safeX) * halfW + mouse.sx * 0.08,
+        cur.y * halfH + hover * halfH * 0.3 + mouse.sy * 0.06,
+        Math.sin(t * 0.8) * 0.06
       );
 
-      flight.scale.setScalar(halfH * 2 * 0.28 * cur.s);
+      // Check distance to the 3D globe section (#africa-impact)
+      // When nearing or viewing the 3D globe, pill disappears completely!
+      let globeProximityFade = 1.0;
+      const globeSection = document.getElementById('africa-impact');
+      if (globeSection) {
+        const rect = globeSection.getBoundingClientRect();
+        if (rect.top < window.innerHeight * 1.15 && rect.bottom > -80) {
+          globeProximityFade = 0.0; // Completely hidden during globe & testimonials
+        } else if (rect.top < window.innerHeight * 1.5 && rect.top >= window.innerHeight * 1.15) {
+          globeProximityFade = (rect.top - window.innerHeight * 1.15) / (window.innerHeight * 0.35);
+        }
+      }
 
-      // Natural tumbling and cursor interaction
-      capsuleRoot.rotation.x = ((cur.pitch + mouse.sy * 12) * Math.PI) / 180 + Math.sin(t * 1.2) * 0.06;
-      capsuleRoot.rotation.y = ((cur.yaw + mouse.sx * 18) * Math.PI) / 180 + t * 0.32;
-      capsuleRoot.rotation.z = (cur.roll * Math.PI) / 180 + Math.cos(t * 1.5) * 0.06;
+      const activeScale = Math.max(0, cur.s * globeProximityFade);
 
-      ring1.rotation.z = t * 0.55;
-      ring2.rotation.y = t * -0.45;
-      particles.rotation.y = t * 0.12;
+      if (activeScale < 0.03) {
+        flight.visible = false;
+      } else {
+        flight.visible = true;
+        flight.scale.setScalar(halfH * 2 * 0.17 * activeScale);
+      }
+
+      capsuleRoot.rotation.x = ((cur.pitch + mouse.sy * 8) * Math.PI) / 180 + Math.sin(t * 1.2) * 0.04;
+      capsuleRoot.rotation.y = ((cur.yaw + mouse.sx * 12) * Math.PI) / 180 + t * 0.28;
+      capsuleRoot.rotation.z = (cur.roll * Math.PI) / 180 + Math.cos(t * 1.5) * 0.04;
+
+      ring1.rotation.z = t * 0.45;
+      ring2.rotation.y = t * -0.35;
+      particles.rotation.y = t * 0.1;
 
       renderer.render(scene, camera);
     }
