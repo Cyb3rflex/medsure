@@ -86,6 +86,7 @@ export const FloatingNav = ({
                   { name: "Architecture", link: "#safety-engine" },
                   { name: "Africa Hubs", link: "#africa-impact" },
                   { name: "Stories", link: "#testimonials" },
+                  { name: "FAQ", link: "#faq" },
                 ].map((item, idx) => (
                   <a
                     key={`story-nav-${idx}`}

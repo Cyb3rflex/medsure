@@ -2,6 +2,7 @@
 import React, { useState } from "react";
 import { Globe3D, GlobeMarker } from "@/components/ui/3d-globe";
 import { MapPin, ShieldCheck, HeartPulse, Sparkles, Activity, CheckCircle, ArrowRight } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 export const AFRICAN_MEDICAL_HUBS: GlobeMarker[] = [
   // Nigeria - Core Focus Hubs
@@ -270,14 +271,14 @@ export default function Globe3DDemo({ onLaunchApp }: { onLaunchApp?: () => void 
         </div>
 
         {/* 3D Globe Canvas Container */}
-        <div className="relative mt-2 w-full h-[540px] md:h-[640px] flex items-center justify-center">
+        <div className="relative mt-2 w-full h-[520px] md:h-[620px] flex items-center justify-center">
           <Globe3D
             markers={AFRICAN_MEDICAL_HUBS}
             config={{
               atmosphereColor: "#10b981",
               atmosphereIntensity: 0.8,
               bumpScale: 2.0,
-              autoRotateSpeed: 0.85,
+              autoRotateSpeed: 0.75,
             }}
             onMarkerClick={(marker) => {
               setSelectedHub(marker);
@@ -290,9 +291,29 @@ export default function Globe3DDemo({ onLaunchApp }: { onLaunchApp?: () => void 
           />
         </div>
 
+        {/* Quick Hub Filter & Instant Tap Grid (Guarantees every user on touch or mouse can inspect all 18 hubs instantly) */}
+        <div className="mt-4 flex flex-wrap items-center justify-center gap-1.5 sm:gap-2 max-w-4xl mx-auto">
+          {AFRICAN_MEDICAL_HUBS.map((hub) => (
+            <button
+              key={`hub-btn-${hub.city}`}
+              onClick={() => setSelectedHub(hub)}
+              onMouseEnter={() => setSelectedHub(hub)}
+              className={cn(
+                "px-2.5 py-1 rounded-full text-xs font-semibold transition-all cursor-pointer flex items-center gap-1.5 border",
+                selectedHub.city === hub.city
+                  ? "bg-emerald-500 text-slate-950 border-emerald-400 shadow-md shadow-emerald-500/30 scale-105"
+                  : "bg-slate-900/80 hover:bg-slate-800 text-slate-300 border-slate-800 hover:border-slate-700"
+              )}
+            >
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
+              <span>{hub.city}</span>
+            </button>
+          ))}
+        </div>
+
         {/* Touch / Click Hint for mobile & desktop */}
-        <p className="mt-2 text-xs text-slate-400 font-mono">
-          💡 Tip: Click, drag to rotate the globe, and tap any glowing beacon to inspect local clinical safeguards.
+        <p className="mt-3 text-xs text-slate-400 font-mono">
+          💡 Tip: Drag to rotate the globe, tap any glowing 3D beacon, or select a regional hub above to inspect live safeguards.
         </p>
       </div>
     </section>

@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { FloatingNav } from '@/components/ui/floating-navbar';
-import Header from '@/components/Header';
+import Footer from '@/components/Footer';
 import EmergencyBanner from '@/components/EmergencyBanner';
 import Scanner from '@/components/Scanner';
 import SafetyResultView from '@/components/SafetyResultView';
@@ -223,19 +223,8 @@ export default function Home() {
       </main>
     )}
 
-      {/* Footer */}
-      <footer className="glass-panel border-t border-slate-800/80 py-6 px-4 mt-auto">
-        <div className="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-slate-400">
-          <div className="flex items-center gap-2">
-            <ShieldCheck className="w-4 h-4 text-emerald-400" />
-            <span className="font-semibold text-slate-300">MedSure Nigeria</span>
-            <span>— OPEN//BUILD Hackathon Practice &amp; Prototype</span>
-          </div>
-          <p className="text-[11px] text-slate-500 text-center sm:text-right">
-            Deterministic Code Guardrails • Multilingual Audio • Pharmacist-in-the-Loop Escalation
-          </p>
-        </div>
-      </footer>
+      {/* Well Organised Footer */}
+      <Footer onNavigateTab={setActiveTab} />
     </div>
   );
 }

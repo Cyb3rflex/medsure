@@ -23,6 +23,7 @@ import {
 } from 'lucide-react';
 import Globe3DDemo from '@/components/3d-globe-demo';
 import AnimatedTestimonialsDemo from '@/components/animated-testimonials-demo';
+import FAQSection from '@/components/FAQSection';
 import ParticleBackground from '@/components/ParticleBackground';
 
 interface MedSureLanding3DProps {
@@ -697,6 +698,11 @@ export default function MedSureLanding3D({ onOpenApp }: MedSureLanding3DProps) {
       {/* SECTION 5: AUTHENTIC AFRICAN TESTIMONIALS */}
       {/* ========================================================================= */}
       <AnimatedTestimonialsDemo />
+
+      {/* ========================================================================= */}
+      {/* SECTION 6: FREQUENTLY ASKED QUESTIONS */}
+      {/* ========================================================================= */}
+      <FAQSection />
 
       {/* ========================================================================= */}
       {/* SECTION 6: FINAL HIGH-IMPACT LAUNCH CTA */}

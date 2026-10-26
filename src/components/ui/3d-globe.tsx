@@ -60,6 +60,7 @@ function latLngToVector3(
   lng: number,
   radius: number
 ): THREE.Vector3 {
+  // Convert standard latitude / longitude to 3D spherical coordinates matching Earth texture
   const phi = (90 - lat) * (Math.PI / 180);
   const theta = (lng + 180) * (Math.PI / 180);
 
@@ -88,42 +89,45 @@ function Marker({
   const [hovered, setHovered] = useState(false);
   const [isVisible, setIsVisible] = useState(true);
   const groupRef = useRef<THREE.Group>(null);
-  const imageGroupRef = useRef<THREE.Group>(null);
   const { camera } = useThree();
 
   const surfacePosition = useMemo(() => {
-    return latLngToVector3(marker.lat, marker.lng, radius * 1.001);
+    return latLngToVector3(marker.lat, marker.lng, radius * 1.002);
   }, [marker.lat, marker.lng, radius]);
 
   const topPosition = useMemo(() => {
-    return latLngToVector3(marker.lat, marker.lng, radius * 1.18);
+    return latLngToVector3(marker.lat, marker.lng, radius * 1.14);
   }, [marker.lat, marker.lng, radius]);
 
   const lineHeight = topPosition.distanceTo(surfacePosition);
 
   useFrame(() => {
-    if (!imageGroupRef.current) return;
+    if (!groupRef.current) return;
     const worldPos = new THREE.Vector3();
-    imageGroupRef.current.getWorldPosition(worldPos);
+    groupRef.current.getWorldPosition(worldPos);
 
+    // Front-facing occlusion test
     const markerDirection = worldPos.clone().normalize();
     const cameraDirection = camera.position.clone().normalize();
     const dot = markerDirection.dot(cameraDirection);
 
-    setIsVisible(dot > 0.1);
+    setIsVisible(dot > -0.05);
   });
 
-  const handlePointerEnter = useCallback(() => {
+  const handlePointerEnter = useCallback((e?: any) => {
+    e?.stopPropagation?.();
     setHovered(true);
     onHover?.(marker);
   }, [marker, onHover]);
 
-  const handlePointerLeave = useCallback(() => {
+  const handlePointerLeave = useCallback((e?: any) => {
+    e?.stopPropagation?.();
     setHovered(false);
-    onHover?.(null);
-  }, [onHover]);
+  }, []);
 
-  const handleClick = useCallback(() => {
+  const handleClick = useCallback((e?: any) => {
+    e?.stopPropagation?.();
+    setHovered(true);
     onClick?.(marker);
   }, [marker, onClick]);
 
@@ -138,7 +142,19 @@ function Marker({
 
   return (
     <group ref={groupRef} visible={isVisible}>
-      {/* Pin line */}
+      {/* 1. Generous Invisible Raycast Hitbox Sphere for effortless mobile tap and desktop click */}
+      <mesh
+        position={topPosition}
+        onPointerEnter={handlePointerEnter}
+        onPointerLeave={handlePointerLeave}
+        onClick={handleClick}
+        onPointerDown={handleClick}
+      >
+        <sphereGeometry args={[0.16, 12, 12]} />
+        <meshBasicMaterial transparent opacity={0} depthWrite={false} />
+      </mesh>
+
+      {/* 2. Pin Stem Line */}
       <mesh
         position={lineCenter}
         quaternion={lineQuaternion}
@@ -147,15 +163,15 @@ function Marker({
         onClick={handleClick}
         onPointerDown={handleClick}
       >
-        <cylinderGeometry args={[0.005, 0.005, lineHeight, 8]} />
+        <cylinderGeometry args={[0.008, 0.008, lineHeight, 8]} />
         <meshBasicMaterial
           color={hovered ? "#34d399" : "#10b981"}
           transparent
-          opacity={hovered ? 1.0 : 0.75}
+          opacity={hovered ? 1.0 : 0.85}
         />
       </mesh>
 
-      {/* Surface pin point */}
+      {/* 3. Surface Anchor Pin */}
       <mesh
         position={surfacePosition}
         quaternion={lineQuaternion}
@@ -164,62 +180,76 @@ function Marker({
         onClick={handleClick}
         onPointerDown={handleClick}
       >
-        <coneGeometry args={[0.025, 0.06, 8]} />
+        <coneGeometry args={[0.035, 0.08, 8]} />
+        <meshBasicMaterial color={hovered ? "#6ee7b7" : "#059669"} />
+      </mesh>
+
+      {/* 4. Glowing 3D Orb at the head */}
+      <mesh
+        position={topPosition}
+        onPointerEnter={handlePointerEnter}
+        onPointerLeave={handlePointerLeave}
+        onClick={handleClick}
+        onPointerDown={handleClick}
+      >
+        <sphereGeometry args={[hovered ? 0.055 : 0.04, 16, 16]} />
         <meshBasicMaterial color={hovered ? "#6ee7b7" : "#10b981"} />
       </mesh>
 
-      {/* Circular image badge at the top with generous touch target */}
-      <group ref={imageGroupRef} position={topPosition}>
-        <Html
-          transform
-          center
-          sprite
-          distanceFactor={10}
-          style={{
-            pointerEvents: isVisible ? "auto" : "none",
-            opacity: isVisible ? 1 : 0,
-            transition: "opacity 0.2s ease-out",
-          }}
+      {/* 5. 2D Html Badge overlay */}
+      <Html
+        position={topPosition}
+        center
+        distanceFactor={9}
+        zIndexRange={[100, 0]}
+        style={{
+          pointerEvents: isVisible ? "auto" : "none",
+          opacity: isVisible ? 1 : 0,
+          transition: "all 0.15s ease-out",
+          transform: "translate3d(-50%, -50%, 0)",
+        }}
+      >
+        <div
+          className="cursor-pointer select-none group p-2 -m-2 touch-manipulation"
+          onMouseEnter={handlePointerEnter}
+          onMouseLeave={handlePointerLeave}
+          onClick={handleClick}
+          onTouchStart={handleClick}
+          onPointerDown={handleClick}
         >
           <div
-            className="p-1 cursor-pointer select-none group"
-            onMouseEnter={handlePointerEnter}
-            onMouseLeave={handlePointerLeave}
-            onClick={handleClick}
-            onTouchStart={handleClick}
-            onPointerDown={handleClick}
+            className={cn(
+              "relative overflow-hidden rounded-full bg-slate-950 shadow-2xl transition-all duration-200 border-2",
+              hovered
+                ? "scale-135 border-emerald-300 ring-4 ring-emerald-400/50 shadow-emerald-500/60"
+                : "border-emerald-400/90 hover:border-emerald-300 hover:scale-120"
+            )}
+            style={{ width: "24px", height: "24px" }}
           >
+            <img
+              src={marker.src}
+              alt={marker.city || "Marker"}
+              className="h-full w-full object-cover pointer-events-none"
+              draggable={false}
+            />
+            <span className="absolute inset-0 rounded-full bg-emerald-400/30 animate-ping pointer-events-none" />
+          </div>
+
+          {/* Micro City Pill */}
+          {marker.city && (
             <div
               className={cn(
-                "relative overflow-hidden rounded-full bg-slate-950 shadow-xl transition-all duration-200 border-2",
+                "absolute top-full left-1/2 -translate-x-1/2 mt-1 px-2 py-0.5 rounded-md text-[11px] font-bold whitespace-nowrap shadow-xl border pointer-events-none transition-all",
                 hovered
-                  ? "scale-140 border-emerald-300 ring-4 ring-emerald-400/40 shadow-emerald-500/50"
-                  : "border-emerald-400/80 hover:border-emerald-300 hover:scale-125"
+                  ? "bg-slate-900 border-emerald-400 text-emerald-300 scale-105 z-50 opacity-100"
+                  : "bg-slate-950/80 border-slate-700/60 text-slate-300 opacity-0 group-hover:opacity-100"
               )}
-              style={{
-                width: "20px",
-                height: "20px",
-              }}
             >
-              <img
-                src={marker.src}
-                alt={marker.label || "Marker"}
-                className="h-full w-full object-cover"
-                draggable={false}
-              />
-              {/* Pulsing beacon ring */}
-              <span className="absolute inset-0 rounded-full bg-emerald-400/20 animate-ping pointer-events-none" />
+              {marker.city}
             </div>
-
-            {/* Micro city label visible on hover */}
-            {hovered && marker.city && (
-              <div className="absolute top-full left-1/2 -translate-x-1/2 mt-1 px-2 py-0.5 rounded-md bg-slate-900/95 border border-emerald-500/50 text-[10px] text-emerald-300 font-bold whitespace-nowrap shadow-lg pointer-events-none z-50">
-                {marker.city}
-              </div>
-            )}
-          </div>
-        </Html>
-      </group>
+          )}
+        </div>
+      </Html>
     </group>
   );
 }
@@ -461,7 +491,7 @@ export function Globe3D({
   );
 
   return (
-    <div className={cn("relative h-[480px] w-full", className)}>
+    <div className={cn("relative w-full h-[520px] md:h-[620px]", className)}>
       <Canvas
         gl={{
           antialias: true,
@@ -473,10 +503,11 @@ export function Globe3D({
           fov: 45,
           near: 0.1,
           far: 1000,
-          position: [0, 0, mergedConfig.radius * 3.5],
+          position: [0, 0, mergedConfig.radius * 3.4],
         }}
         style={{
           background: mergedConfig.backgroundColor || "transparent",
+          pointerEvents: "auto",
         }}
       >
         <Suspense fallback={<LoadingFallback />}>
