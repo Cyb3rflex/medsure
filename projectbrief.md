@@ -1,7 +1,4 @@
 Project Brief 
-
-
-
 Basic Build - Problem:
 In the suburbs of Northern Nigeria, the local residents of Ajala town would often complain of stomach upset after taking a locally recommended, sub-standard, medication by their so-called Chemist. 
 Down in the riverine areas, a popular city has recorded over 18,000 cases of allergy from drugs. These have led to unchangeable mutations in the lives of some people, due to consistent intake of those medications without knowing they contained the ingredient of their allergy.

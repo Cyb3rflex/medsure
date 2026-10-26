@@ -396,7 +396,7 @@ export default function MedSureLanding3D({ onOpenApp }: MedSureLanding3DProps) {
       {/* ========================================================================= */}
       <section className="story-section hero min-h-[92vh] relative overflow-hidden z-10 flex flex-col justify-center px-4 sm:px-8 lg:px-16 pt-28 pb-16" id="hero">
         {/* Aceternity UI Background Beams for dynamic luminous aesthetics */}
-        <BackgroundBeams className="opacity-40 pointer-events-none" />
+        <BackgroundBeams className="opacity-75 pointer-events-none" />
 
         <div className="max-w-4xl mx-auto text-center space-y-6 relative z-10">
           {/* OSCA Hacktoberfest Challenge Badge */}
