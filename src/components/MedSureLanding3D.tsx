@@ -25,6 +25,7 @@ import Globe3DDemo from '@/components/3d-globe-demo';
 import AnimatedTestimonialsDemo from '@/components/animated-testimonials-demo';
 import FAQSection from '@/components/FAQSection';
 import ParticleBackground from '@/components/ParticleBackground';
+import { BackgroundBeams } from '@/components/ui/background-beams';
 
 interface MedSureLanding3DProps {
   onOpenApp: () => void;
@@ -393,8 +394,11 @@ export default function MedSureLanding3D({ onOpenApp }: MedSureLanding3DProps) {
       {/* ========================================================================= */}
       {/* SECTION 0: HERO (Instant Clarity for Patients, Caregivers & Hackathon Judges) */}
       {/* ========================================================================= */}
-      <section className="story-section hero min-h-[92vh] relative overflow-visible z-10 flex flex-col justify-center px-4 sm:px-8 lg:px-16 pt-28 pb-16" id="hero">
-        <div className="max-w-4xl mx-auto text-center space-y-6 z-10">
+      <section className="story-section hero min-h-[92vh] relative overflow-hidden z-10 flex flex-col justify-center px-4 sm:px-8 lg:px-16 pt-28 pb-16" id="hero">
+        {/* Aceternity UI Background Beams for dynamic luminous aesthetics */}
+        <BackgroundBeams className="opacity-40 pointer-events-none" />
+
+        <div className="max-w-4xl mx-auto text-center space-y-6 relative z-10">
           {/* OSCA Hacktoberfest Challenge Badge */}
           <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-emerald-950/80 border border-emerald-500/40 text-emerald-300 text-xs sm:text-sm font-semibold shadow-lg backdrop-blur-md">
             <ShieldCheck className="w-4 h-4 text-emerald-400" />
