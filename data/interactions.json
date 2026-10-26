@@ -1,0 +1,114 @@
+[
+  {
+    "Medicine or group A": "group:nsaid",
+    "Medicine or group B": "group:nsaid",
+    "Severity": "avoid",
+    "Message shown to user": "Both are anti-inflammatory painkillers (NSAIDs). Together they raise the risk of stomach bleeding and kidney harm.",
+    "Verified": "No",
+    "Notes": ""
+  },
+  {
+    "Medicine or group A": "group:antimalarial",
+    "Medicine or group B": "group:antimalarial",
+    "Severity": "avoid",
+    "Message shown to user": "These are both malaria medicines. Do not take two malaria treatments together unless a health worker directs it.",
+    "Verified": "No",
+    "Notes": ""
+  },
+  {
+    "Medicine or group A": "group:sedating",
+    "Medicine or group B": "group:sedating",
+    "Severity": "caution",
+    "Message shown to user": "Both cause drowsiness. Together they can make you very sleepy and slow your breathing. Ask a pharmacist first.",
+    "Verified": "No",
+    "Notes": ""
+  },
+  {
+    "Medicine or group A": "group:sulfonamide",
+    "Medicine or group B": "group:sulfonamide",
+    "Severity": "avoid",
+    "Message shown to user": "Both contain sulfa medicines. People taking co-trimoxazole should not also be given SP unless a health worker decides.",
+    "Verified": "No",
+    "Notes": ""
+  },
+  {
+    "Medicine or group A": "ciprofloxacin",
+    "Medicine or group B": "antacid",
+    "Severity": "separate",
+    "Message shown to user": "Antacids stop ciprofloxacin being absorbed. Take them hours apart (see the leaflet).",
+    "Verified": "No",
+    "Notes": ""
+  },
+  {
+    "Medicine or group A": "ciprofloxacin",
+    "Medicine or group B": "ferrous_sulfate",
+    "Severity": "separate",
+    "Message shown to user": "Iron stops ciprofloxacin being absorbed. Take them hours apart (see the leaflet).",
+    "Verified": "No",
+    "Notes": ""
+  },
+  {
+    "Medicine or group A": "ciprofloxacin",
+    "Medicine or group B": "zinc",
+    "Severity": "separate",
+    "Message shown to user": "Zinc stops ciprofloxacin being absorbed. Take them hours apart (see the leaflet).",
+    "Verified": "No",
+    "Notes": ""
+  },
+  {
+    "Medicine or group A": "doxycycline",
+    "Medicine or group B": "antacid",
+    "Severity": "separate",
+    "Message shown to user": "Antacids stop doxycycline being absorbed. Take them hours apart (see the leaflet).",
+    "Verified": "No",
+    "Notes": ""
+  },
+  {
+    "Medicine or group A": "doxycycline",
+    "Medicine or group B": "ferrous_sulfate",
+    "Severity": "separate",
+    "Message shown to user": "Iron stops doxycycline being absorbed. Take them hours apart (see the leaflet).",
+    "Verified": "No",
+    "Notes": ""
+  },
+  {
+    "Medicine or group A": "doxycycline",
+    "Medicine or group B": "zinc",
+    "Severity": "separate",
+    "Message shown to user": "Zinc stops doxycycline being absorbed. Take them hours apart (see the leaflet).",
+    "Verified": "No",
+    "Notes": ""
+  },
+  {
+    "Medicine or group A": "azithromycin",
+    "Medicine or group B": "antacid",
+    "Severity": "separate",
+    "Message shown to user": "Antacids can reduce how well azithromycin works. Keep them a few hours apart.",
+    "Verified": "No",
+    "Notes": ""
+  },
+  {
+    "Medicine or group A": "group:nsaid",
+    "Medicine or group B": "amlodipine",
+    "Severity": "caution",
+    "Message shown to user": "Anti-inflammatory painkillers can raise blood pressure and make blood pressure medicine work less well. Ask a pharmacist.",
+    "Verified": "No",
+    "Notes": ""
+  },
+  {
+    "Medicine or group A": "metoclopramide",
+    "Medicine or group B": "hyoscine_butylbromide",
+    "Severity": "caution",
+    "Message shown to user": "These have opposite effects on the gut, so each can cancel out the other. Ask a pharmacist.",
+    "Verified": "No",
+    "Notes": ""
+  },
+  {
+    "Medicine or group A": "fluconazole",
+    "Medicine or group B": "amlodipine",
+    "Severity": "caution",
+    "Message shown to user": "Fluconazole can increase the effect of amlodipine. Ask a pharmacist.",
+    "Verified": "No",
+    "Notes": ""
+  }
+]
