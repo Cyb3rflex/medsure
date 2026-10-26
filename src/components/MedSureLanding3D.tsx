@@ -3,7 +3,23 @@
 import React, { useEffect, useRef } from 'react';
 import * as THREE from 'three';
 import { RoomEnvironment } from 'three/examples/jsm/environments/RoomEnvironment.js';
-import { ShieldCheck, Sparkles, Stethoscope, ArrowRight, Pill, HeartPulse, CheckCircle2 } from 'lucide-react';
+import {
+  ShieldCheck,
+  Sparkles,
+  ArrowRight,
+  Pill,
+  Camera,
+  CheckCircle2,
+  AlertTriangle,
+  Volume2,
+  PhoneCall,
+  Lock,
+  HeartPulse,
+  Users
+} from 'lucide-react';
+import Globe3DDemo from '@/components/3d-globe-demo';
+import FloatingNavDemo from '@/components/floating-navbar-demo';
+import AnimatedTestimonialsDemo from '@/components/animated-testimonials-demo';
 
 interface MedSureLanding3DProps {
   onOpenApp: () => void;
@@ -21,15 +37,18 @@ export default function MedSureLanding3D({ onOpenApp }: MedSureLanding3DProps) {
     const sections = Array.from(document.querySelectorAll('.story-section'));
     const parallaxEls = Array.from(document.querySelectorAll('[data-speed]'));
 
-    const revealObserver = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          entry.target.classList.add('in');
-        }
-      });
-    }, { threshold: 0.15 });
+    const revealObserver = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('in');
+          }
+        });
+      },
+      { threshold: 0.15 }
+    );
 
-    sections.forEach(sec => revealObserver.observe(sec));
+    sections.forEach((sec) => revealObserver.observe(sec));
 
     function onScroll() {
       const innerH = window.innerHeight || 1;
@@ -66,39 +85,38 @@ export default function MedSureLanding3D({ onOpenApp }: MedSureLanding3DProps) {
     const camera = new THREE.PerspectiveCamera(32, window.innerWidth / window.innerHeight, 0.1, 100);
     camera.position.set(0, 0, 9);
 
-    // 2. Lighting Rig for Shiny Medical Sheen
+    // 2. Lighting Rig
     const hemiLight = new THREE.HemisphereLight(0xecfdf5, 0x0f172a, 1.4);
     scene.add(hemiLight);
 
-    const dirLight1 = new THREE.DirectionalLight(0xffffff, 2.8);
+    const dirLight1 = new THREE.DirectionalLight(0xffffff, 2.5);
     dirLight1.position.set(4, 5, 5);
     scene.add(dirLight1);
 
-    const dirLight2 = new THREE.DirectionalLight(0x34d399, 2.2);
+    const dirLight2 = new THREE.DirectionalLight(0x34d399, 2.0);
     dirLight2.position.set(-5, -2, -3);
     scene.add(dirLight2);
 
-    const cyanPointLight = new THREE.PointLight(0x06b6d4, 3.5, 12);
+    const cyanPointLight = new THREE.PointLight(0x06b6d4, 3.0, 10);
     cyanPointLight.position.set(0, 2, 3);
     scene.add(cyanPointLight);
 
-    // 3. 3D Capsule Pill (💊) Construction
+    // 3. 3D Capsule Pill (Significantly reduced in scale to avoid blocking text)
     const flight = new THREE.Group();
     scene.add(flight);
 
     const capsuleRoot = new THREE.Group();
     flight.add(capsuleRoot);
 
-    // Materials: Emerald Green Glossy Half + Pristine White Half + Gold Seam Ring
     const emeraldMat = new THREE.MeshPhysicalMaterial({
       color: 0x10b981,
-      emissive: 0x064e3b,
-      emissiveIntensity: 0.35,
-      roughness: 0.1,
+      roughness: 0.15,
       metalness: 0.08,
       clearcoat: 1.0,
       clearcoatRoughness: 0.08,
-      reflectivity: 0.95
+      transmission: 0.22,
+      ior: 1.52,
+      thickness: 0.4
     });
 
     const whiteMat = new THREE.MeshPhysicalMaterial({
@@ -115,104 +133,104 @@ export default function MedSureLanding3D({ onOpenApp }: MedSureLanding3DProps) {
       metalness: 0.85
     });
 
-    const capsuleHalfLength = 0.55;
-    const capsuleRadius = 0.58;
+    // Scaled down dimensions: reduced from 0.58/0.55 to 0.34/0.32
+    const capsuleHalfLength = 0.32;
+    const capsuleRadius = 0.34;
 
     // Top Half (Emerald Green)
     const topGroup = new THREE.Group();
-    const topCylGeom = new THREE.CylinderGeometry(capsuleRadius, capsuleRadius, capsuleHalfLength, 36, 1, true);
+    const topCylGeom = new THREE.CylinderGeometry(capsuleRadius, capsuleRadius, capsuleHalfLength, 32, 1, true);
     topCylGeom.translate(0, capsuleHalfLength / 2, 0);
     const topCyl = new THREE.Mesh(topCylGeom, emeraldMat);
     topGroup.add(topCyl);
 
-    const topDomeGeom = new THREE.SphereGeometry(capsuleRadius, 36, 18, 0, Math.PI * 2, 0, Math.PI / 2);
+    const topDomeGeom = new THREE.SphereGeometry(capsuleRadius, 32, 16, 0, Math.PI * 2, 0, Math.PI / 2);
     topDomeGeom.translate(0, capsuleHalfLength, 0);
     const topDome = new THREE.Mesh(topDomeGeom, emeraldMat);
     topGroup.add(topDome);
     capsuleRoot.add(topGroup);
 
-    // Bottom Half (Porcelain White)
+    // Bottom Half (White Porcelain)
     const botGroup = new THREE.Group();
-    const botCylGeom = new THREE.CylinderGeometry(capsuleRadius, capsuleRadius, capsuleHalfLength, 36, 1, true);
+    const botCylGeom = new THREE.CylinderGeometry(capsuleRadius, capsuleRadius, capsuleHalfLength, 32, 1, true);
     botCylGeom.translate(0, -capsuleHalfLength / 2, 0);
     const botCyl = new THREE.Mesh(botCylGeom, whiteMat);
     botGroup.add(botCyl);
 
-    const botDomeGeom = new THREE.SphereGeometry(capsuleRadius, 36, 18, 0, Math.PI * 2, Math.PI / 2, Math.PI / 2);
+    const botDomeGeom = new THREE.SphereGeometry(capsuleRadius, 32, 16, 0, Math.PI * 2, Math.PI / 2, Math.PI / 2);
     botDomeGeom.translate(0, -capsuleHalfLength, 0);
     const botDome = new THREE.Mesh(botDomeGeom, whiteMat);
     botGroup.add(botDome);
     capsuleRoot.add(botGroup);
 
-    // Golden Middle Joint Ring
-    const seamGeom = new THREE.TorusGeometry(capsuleRadius * 1.015, 0.035, 16, 64);
+    // Seam Ring
+    const seamGeom = new THREE.TorusGeometry(capsuleRadius * 1.015, 0.025, 16, 48);
     seamGeom.rotateX(Math.PI / 2);
     const seamMesh = new THREE.Mesh(seamGeom, goldRingMat);
     capsuleRoot.add(seamMesh);
 
-    // Medical Cross Insignia on the Capsule Face
+    // Cross Insignia
     const crossGroup = new THREE.Group();
     const crossMat = new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.95 });
-    const barVGeom = new THREE.BoxGeometry(0.08, 0.28, 0.04);
-    const barHGeom = new THREE.BoxGeometry(0.28, 0.08, 0.04);
+    const barVGeom = new THREE.BoxGeometry(0.05, 0.18, 0.03);
+    const barHGeom = new THREE.BoxGeometry(0.18, 0.05, 0.03);
     crossGroup.add(new THREE.Mesh(barVGeom, crossMat));
     crossGroup.add(new THREE.Mesh(barHGeom, crossMat));
     crossGroup.position.set(0, capsuleHalfLength * 0.55, capsuleRadius * 0.98);
     capsuleRoot.add(crossGroup);
 
-    // 4. Orbiting Holographic Rings
-    const ring1Geom = new THREE.TorusGeometry(1.28, 0.015, 16, 80);
-    const ring1Mat = new THREE.MeshBasicMaterial({ color: 0x34d399, transparent: true, opacity: 0.65 });
+    // Orbiting Rings (Scales lowered)
+    const ring1Geom = new THREE.TorusGeometry(0.85, 0.012, 16, 64);
+    const ring1Mat = new THREE.MeshBasicMaterial({ color: 0x34d399, transparent: true, opacity: 0.55 });
     const ring1 = new THREE.Mesh(ring1Geom, ring1Mat);
     ring1.rotation.x = Math.PI / 3;
     ring1.rotation.y = Math.PI / 6;
     capsuleRoot.add(ring1);
 
-    const ring2Geom = new THREE.TorusGeometry(1.55, 0.012, 16, 80);
-    const ring2Mat = new THREE.MeshBasicMaterial({ color: 0x38bdf8, transparent: true, opacity: 0.45 });
+    const ring2Geom = new THREE.TorusGeometry(1.05, 0.01, 16, 64);
+    const ring2Mat = new THREE.MeshBasicMaterial({ color: 0x38bdf8, transparent: true, opacity: 0.4 });
     const ring2 = new THREE.Mesh(ring2Geom, ring2Mat);
     ring2.rotation.x = -Math.PI / 4;
     ring2.rotation.z = Math.PI / 5;
     capsuleRoot.add(ring2);
 
-    // 5. Floating Ambient Sparkles/Particles
-    const particleCount = 45;
+    // Ambient floating particles
+    const particleCount = 35;
     const particleGeom = new THREE.BufferGeometry();
     const particlePos = new Float32Array(particleCount * 3);
     for (let i = 0; i < particleCount * 3; i += 3) {
-      particlePos[i] = (Math.random() - 0.5) * 4.5;
-      particlePos[i + 1] = (Math.random() - 0.5) * 4.5;
-      particlePos[i + 2] = (Math.random() - 0.5) * 3.5;
+      particlePos[i] = (Math.random() - 0.5) * 3.0;
+      particlePos[i + 1] = (Math.random() - 0.5) * 3.0;
+      particlePos[i + 2] = (Math.random() - 0.5) * 2.5;
     }
     particleGeom.setAttribute('position', new THREE.BufferAttribute(particlePos, 3));
     const particleMat = new THREE.PointsMaterial({
       color: 0x6ee7b7,
-      size: 0.055,
+      size: 0.045,
       transparent: true,
-      opacity: 0.7,
+      opacity: 0.65,
       blending: THREE.AdditiveBlending
     });
     const particles = new THREE.Points(particleGeom, particleMat);
     capsuleRoot.add(particles);
 
-    // Fade in canvas instantly
     canvas.classList.add('ready');
 
-    // 6. Camera Trajectory Keyframes across Scroll
+    // 4. Trajectory Keyframes: Pill sits discreetly off to the right / edge
     const K_DESKTOP = [
-      { x: 0.0, y: -0.05, s: 1.05, yaw: 45, pitch: -15, roll: 25 },     // Hero
-      { x: -0.26, y: -0.02, s: 1.0, yaw: -35, pitch: 20, roll: -15 },   // 01 Ingredients
-      { x: 0.28, y: -0.18, s: 1.05, yaw: 130, pitch: -10, roll: 20 },   // 02 Code Guardrails
-      { x: -0.24, y: 0.05, s: 0.95, yaw: 210, pitch: 25, roll: -10 },   // 03 Multilingual Voice
-      { x: 0.0, y: -0.05, s: 1.0, yaw: 360, pitch: 0, roll: 10 }        // Footer
+      { x: 0.35, y: -0.05, s: 0.62, yaw: 45, pitch: -15, roll: 25 },
+      { x: -0.32, y: -0.02, s: 0.58, yaw: -35, pitch: 20, roll: -15 },
+      { x: 0.35, y: -0.15, s: 0.60, yaw: 130, pitch: -10, roll: 20 },
+      { x: -0.30, y: 0.05, s: 0.56, yaw: 210, pitch: 25, roll: -10 },
+      { x: 0.0, y: -0.25, s: 0.52, yaw: 360, pitch: 0, roll: 10 }
     ];
 
     const K_MOBILE = [
-      { x: 0.0, y: 0.08, s: 0.75, yaw: 45, pitch: -15, roll: 25 },
-      { x: 0.0, y: 0.15, s: 0.72, yaw: -35, pitch: 20, roll: -15 },
-      { x: 0.0, y: 0.15, s: 0.72, yaw: 130, pitch: -10, roll: 20 },
-      { x: 0.0, y: 0.15, s: 0.70, yaw: 210, pitch: 25, roll: -10 },
-      { x: 0.0, y: 0.08, s: 0.70, yaw: 360, pitch: 0, roll: 10 }
+      { x: 0.0, y: 0.28, s: 0.42, yaw: 45, pitch: -15, roll: 25 },
+      { x: 0.0, y: 0.28, s: 0.40, yaw: -35, pitch: 20, roll: -15 },
+      { x: 0.0, y: 0.28, s: 0.40, yaw: 130, pitch: -10, roll: 20 },
+      { x: 0.0, y: 0.28, s: 0.38, yaw: 210, pitch: 25, roll: -10 },
+      { x: 0.0, y: 0.28, s: 0.36, yaw: 360, pitch: 0, roll: 10 }
     ];
 
     function ease(t: number) {
@@ -237,7 +255,7 @@ export default function MedSureLanding3D({ onOpenApp }: MedSureLanding3DProps) {
       const i = Math.min(K.length - 2, Math.floor(p));
       const f = p - i;
       const t = ease(Math.max(0, Math.min(1, (f - 0.1) / 0.8)));
-      const dive = Math.sin(t * Math.PI) * -0.15;
+      const dive = Math.sin(t * Math.PI) * -0.1;
 
       const k0 = K[i];
       const k1 = K[i + 1];
@@ -245,7 +263,7 @@ export default function MedSureLanding3D({ onOpenApp }: MedSureLanding3DProps) {
       return {
         x: lerp(k0.x, k1.x, t),
         y: lerp(k0.y, k1.y, t) + dive,
-        s: lerp(k0.s, k1.s, t) * (1 + Math.sin(t * Math.PI) * 0.08),
+        s: lerp(k0.s, k1.s, t) * (1 + Math.sin(t * Math.PI) * 0.05),
         yaw: lerpAngle(k0.yaw, k1.yaw, t),
         pitch: lerp(k0.pitch, k1.pitch, t),
         roll: lerp(k0.roll, k1.roll, t)
@@ -253,7 +271,7 @@ export default function MedSureLanding3D({ onOpenApp }: MedSureLanding3DProps) {
     }
 
     const clock = new THREE.Clock();
-    const cur = { x: 0.0, y: -0.05, s: 1.05, yaw: 45, pitch: -15, roll: 25 };
+    const cur = { x: 0.35, y: -0.05, s: 0.62, yaw: 45, pitch: -15, roll: 25 };
     const mouse = { x: 0, y: 0, sx: 0, sy: 0 };
 
     const handlePointerMove = (e: MouseEvent) => {
@@ -296,27 +314,23 @@ export default function MedSureLanding3D({ onOpenApp }: MedSureLanding3DProps) {
       const fovRad = (camera.fov * Math.PI) / 180;
       const halfH = Math.tan(fovRad / 2) * camera.position.z;
       const halfW = halfH * camera.aspect;
-      const hover = Math.sin(t * 1.8) * 0.04 + Math.cos(t * 2.5) * 0.015;
+      const hover = Math.sin(t * 1.8) * 0.03 + Math.cos(t * 2.5) * 0.01;
 
       flight.position.set(
-        cur.x * halfW + mouse.sx * 0.15,
-        cur.y * halfH + hover * halfH * 0.45 + mouse.sy * 0.1,
-        Math.sin(t * 0.8) * 0.12
+        cur.x * halfW + mouse.sx * 0.1,
+        cur.y * halfH + hover * halfH * 0.35 + mouse.sy * 0.08,
+        Math.sin(t * 0.8) * 0.08
       );
 
-      flight.scale.setScalar(halfH * 2 * 0.38 * cur.s);
+      flight.scale.setScalar(halfH * 2 * 0.22 * cur.s);
 
-      // Smooth tumble and gentle continuous spin of the capsule
-      capsuleRoot.rotation.x = ((cur.pitch + mouse.sy * 15) * Math.PI) / 180 + Math.sin(t * 1.2) * 0.08;
-      capsuleRoot.rotation.y = ((cur.yaw + mouse.sx * 20) * Math.PI) / 180 + t * 0.35;
-      capsuleRoot.rotation.z = ((cur.roll) * Math.PI) / 180 + Math.cos(t * 1.5) * 0.08;
+      capsuleRoot.rotation.x = ((cur.pitch + mouse.sy * 10) * Math.PI) / 180 + Math.sin(t * 1.2) * 0.05;
+      capsuleRoot.rotation.y = ((cur.yaw + mouse.sx * 15) * Math.PI) / 180 + t * 0.3;
+      capsuleRoot.rotation.z = (cur.roll * Math.PI) / 180 + Math.cos(t * 1.5) * 0.05;
 
-      // Orbiting halo rings rotate dynamically
-      ring1.rotation.z = t * 0.65;
-      ring2.rotation.y = t * -0.5;
-
-      // Particles float slowly
-      particles.rotation.y = t * 0.15;
+      ring1.rotation.z = t * 0.5;
+      ring2.rotation.y = t * -0.4;
+      particles.rotation.y = t * 0.1;
 
       renderer.render(scene, camera);
     }
@@ -334,208 +348,264 @@ export default function MedSureLanding3D({ onOpenApp }: MedSureLanding3DProps) {
   }, []);
 
   return (
-    <div ref={containerRef} className="relative z-0 text-white selection:bg-emerald-500 selection:text-slate-950 font-sans">
-      {/* 3D CAPSULE CANVAS OVERLAY */}
+    <div ref={containerRef} className="relative z-0 text-white selection:bg-emerald-500 selection:text-slate-950 font-sans bg-slate-950">
+      {/* 1. ACETERNITY FLOATING NAVBAR */}
+      <FloatingNavDemo onLaunchApp={onOpenApp} />
+
+      {/* 2. THREE.JS 3D ACCENT CANVAS (Reduced size, floating ambient accent) */}
       <canvas
         ref={canvasRef}
         id="bee"
         className="fixed inset-0 z-20 w-full h-full pointer-events-none opacity-0 transition-opacity duration-1000 [&.ready]:opacity-100"
       />
 
-      {/* STORY HERO SECTION */}
-      <section className="story-section hero min-h-screen relative overflow-visible z-10 flex flex-col justify-between p-6 sm:p-12" id="top">
-        {/* Top Header Badge */}
-        <div className="pt-4 flex items-center justify-between z-10">
-          <div className="flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-xl bg-emerald-500/20 border border-emerald-500/30 flex items-center justify-center">
-              <ShieldCheck className="w-4 h-4 text-emerald-400" />
-            </div>
-            <span className="text-xs uppercase font-extrabold tracking-widest text-emerald-400">
-              MedSure 3D Experience
-            </span>
+      {/* 3. HERO SECTION (Clear, accessible to anyone) */}
+      <section className="story-section hero min-h-[92vh] relative overflow-visible z-10 flex flex-col justify-center px-4 sm:px-8 lg:px-16 pt-28 pb-16" id="hero">
+        <div className="max-w-4xl mx-auto text-center space-y-6 z-10">
+          {/* OSCA Challenge & Trust Badge */}
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-emerald-950/80 border border-emerald-500/40 text-emerald-300 text-xs sm:text-sm font-semibold shadow-lg backdrop-blur-md">
+            <ShieldCheck className="w-4 h-4 text-emerald-400" />
+            <span>OSCA Ile-Ife Hacktoberfest 2026 · Built for Africa</span>
           </div>
 
-          <button
-            onClick={onOpenApp}
-            className="px-4 py-2 rounded-xl bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 text-xs font-bold transition-all flex items-center gap-1.5"
-          >
-            <span>Skip to Clinical App</span>
-            <ArrowRight className="w-3.5 h-3.5" />
-          </button>
-        </div>
-
-        {/* Central Eye-Catching Title */}
-        <div className="text-center max-w-4xl mx-auto my-auto py-12 space-y-4 z-10">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-900/80 border border-emerald-500/30 text-xs text-emerald-300 font-semibold mb-2">
-            <Sparkles className="w-3.5 h-3.5 text-emerald-400" />
-            <span>Interactive 3D Medicine Integrity Engine</span>
-          </div>
-
-          <h1
-            data-speed="0.45"
-            className="font-extrabold text-[clamp(42px,6.5vw,96px)] leading-[1.04] tracking-tight text-white drop-shadow-[0_4px_30px_rgba(0,0,0,0.8)]"
-          >
-            Imagine Medicine Safety<br />
+          {/* Simple, Powerful Headline for Judges, Patients & Low-Literacy Families */}
+          <h1 className="text-4xl sm:text-6xl md:text-7xl font-black text-white tracking-tight leading-[1.08]">
+            Never Take The <br className="hidden sm:block" />
             <span className="bg-gradient-to-r from-emerald-400 via-teal-300 to-cyan-400 bg-clip-text text-transparent">
-              Built Just Like This.
+              Wrong Medicine Again.
             </span>
           </h1>
 
-          <p className="text-slate-100 text-[clamp(16px,1.4vw,20px)] leading-relaxed max-w-2xl mx-auto font-medium drop-shadow-md">
-            Photograph any Nigerian medicine pack to verify safety, understand active ingredients in plain language, and prevent crisis panic at home.
+          {/* Plain Language Value Proposition */}
+          <p className="text-base sm:text-xl text-slate-200 max-w-2xl mx-auto leading-relaxed font-normal">
+            Take a quick photo of any medicine pack. In <strong>5 seconds</strong>, we tell you if it is genuine, unexpired, and safe to take — explained in <strong>English, Pidgin, Yorùbá, Hausa, or Igbo</strong> with spoken audio.
           </p>
 
-          <div className="pt-6 flex flex-wrap items-center justify-center gap-4">
+          {/* Big Action Buttons */}
+          <div className="pt-4 flex flex-wrap items-center justify-center gap-4">
             <button
               onClick={onOpenApp}
-              className="px-8 py-4 rounded-2xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-extrabold text-sm sm:text-base shadow-[0_0_40px_rgba(16,185,129,0.4)] transition-all flex items-center gap-3 cursor-pointer group"
+              className="px-8 py-4 rounded-2xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black text-base sm:text-lg shadow-[0_0_35px_rgba(16,185,129,0.4)] transition-all flex items-center gap-3 active:scale-95 cursor-pointer"
             >
-              <Pill className="w-5 h-5 group-hover:scale-110 transition-transform" />
-              <span>Launch Live Scanner &rarr;</span>
+              <Camera className="w-5 h-5" />
+              <span>Scan Your Medicine Free &rarr;</span>
+            </button>
+            <a
+              href="#how-it-works"
+              className="px-6 py-4 rounded-2xl bg-slate-900/80 hover:bg-slate-800 text-slate-200 border border-slate-700/80 text-sm sm:text-base font-bold transition-all flex items-center gap-2 backdrop-blur-sm"
+            >
+              <span>See How It Works</span>
+            </a>
+          </div>
+
+          {/* Universal Color Code Chips (Designed for Instant Comprehension by Anyone) */}
+          <div className="pt-6 flex flex-wrap items-center justify-center gap-2.5 sm:gap-4 text-xs font-semibold">
+            <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-300">
+              <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse" />
+              <span>🟢 Green = Safe to take</span>
+            </div>
+            <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-300">
+              <span className="w-2.5 h-2.5 rounded-full bg-amber-400" />
+              <span>🟡 Yellow = Caution</span>
+            </div>
+            <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-red-500/10 border border-red-500/30 text-red-300">
+              <span className="w-2.5 h-2.5 rounded-full bg-red-400" />
+              <span>🔴 Red = Stop! See Pharmacist</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* 4. UNIVERSAL 3-STEP "HOW IT WORKS" SECTION (Crystal Clear for Low Literacy & Judges) */}
+      <section id="how-it-works" className="story-section py-20 px-4 sm:px-8 lg:px-16 border-t border-slate-800/80 bg-slate-900/40 relative z-10">
+        <div className="max-w-5xl mx-auto">
+          <div className="text-center max-w-2xl mx-auto mb-14 space-y-3">
+            <span className="text-xs uppercase font-extrabold tracking-widest text-emerald-400">
+              Simple 3-Step Protection
+            </span>
+            <h2 className="text-3xl sm:text-5xl font-black text-white tracking-tight">
+              How MedSure Protects Your Family
+            </h2>
+            <p className="text-sm sm:text-base text-slate-300">
+              No medical training or reading skills needed. We do the clinical thinking for you.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {/* Step 1 */}
+            <div className="glass-panel p-6 sm:p-8 rounded-3xl border border-slate-800 hover:border-emerald-500/40 transition-all bg-slate-900/60 relative group">
+              <div className="w-14 h-14 rounded-2xl bg-emerald-500/15 border border-emerald-500/30 flex items-center justify-center text-emerald-400 font-black text-2xl mb-6 shadow-lg shadow-emerald-950/40">
+                📸
+              </div>
+              <span className="text-xs font-mono text-emerald-400 font-bold uppercase tracking-wider block mb-1">
+                Step 1
+              </span>
+              <h3 className="text-xl font-bold text-white mb-2">
+                Point Phone &amp; Snap
+              </h3>
+              <p className="text-sm text-slate-300 leading-relaxed">
+                Take a quick photo of the box, foil blister strip, or bottle. Or simply type the name. Even if the box is crinkled or worn, our vision model reads the packaging.
+              </p>
+            </div>
+
+            {/* Step 2 */}
+            <div className="glass-panel p-6 sm:p-8 rounded-3xl border border-slate-800 hover:border-emerald-500/40 transition-all bg-slate-900/60 relative group">
+              <div className="w-14 h-14 rounded-2xl bg-cyan-500/15 border border-cyan-500/30 flex items-center justify-center text-cyan-400 font-black text-2xl mb-6 shadow-lg shadow-cyan-950/40">
+                🛡️
+              </div>
+              <span className="text-xs font-mono text-cyan-400 font-bold uppercase tracking-wider block mb-1">
+                Step 2
+              </span>
+              <h3 className="text-xl font-bold text-white mb-2">
+                Code Checks Safety
+              </h3>
+              <p className="text-sm text-slate-300 leading-relaxed">
+                Our code validates the Nigerian <strong>NAFDAC number</strong>, checks expiry dates, and scans for dangerous drug clashes. Zero hallucination: if it is expired or suspect, dosage is halted.
+              </p>
+            </div>
+
+            {/* Step 3 */}
+            <div className="glass-panel p-6 sm:p-8 rounded-3xl border border-slate-800 hover:border-emerald-500/40 transition-all bg-slate-900/60 relative group">
+              <div className="w-14 h-14 rounded-2xl bg-purple-500/15 border border-purple-500/30 flex items-center justify-center text-purple-400 font-black text-2xl mb-6 shadow-lg shadow-purple-950/40">
+                🗣️
+              </div>
+              <span className="text-xs font-mono text-purple-400 font-bold uppercase tracking-wider block mb-1">
+                Step 3
+              </span>
+              <h3 className="text-xl font-bold text-white mb-2">
+                Listen in Your Language
+              </h3>
+              <p className="text-sm text-slate-300 leading-relaxed">
+                Press Play to hear an audio voice note in <strong>English, Pidgin, Yorùbá, Hausa, or Igbo</strong> explaining what the medicine does, how to take it safely, and what to avoid.
+              </p>
+            </div>
+          </div>
+
+          {/* Quick Launch CTA */}
+          <div className="mt-10 text-center">
+            <button
+              onClick={onOpenApp}
+              className="inline-flex items-center gap-2 px-7 py-3.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-sm shadow-lg shadow-emerald-500/25 transition-all"
+            >
+              <span>Test A Demo Medicine Pack Now &rarr;</span>
             </button>
           </div>
         </div>
-
-        {/* Bottom Scroll Cue */}
-        <div className="text-center text-xs text-slate-400 pb-2 z-10">
-          <span className="animate-bounce inline-block">&darr; Scroll down to explore the 3D safety story &darr;</span>
-        </div>
       </section>
 
-      {/* SECTION 01: PLAIN LANGUAGE ACTIVE INGREDIENTS */}
-      <section className="story-section s1 min-h-screen relative overflow-hidden z-[2] flex items-center px-6 sm:px-12 lg:px-20" id="about">
-        <div className="num reveal text-purple-400/20 font-black text-[clamp(120px,18vw,260px)] absolute left-[4vw] top-[30vh] leading-none tracking-tighter select-none pointer-events-none">
-          01
-        </div>
-
-        <div className="relative z-10 max-w-xl ml-auto">
-          <div className="glass-panel p-6 sm:p-8 rounded-3xl border border-white/10 shadow-2xl backdrop-blur-xl space-y-4">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-purple-500/20 border border-purple-500/30 text-xs text-purple-300 font-bold uppercase tracking-wider">
-              Pillar 1 • Transparent Chemistry
-            </div>
-
-            <h2 className="text-[clamp(28px,3.5vw,48px)] font-extrabold text-white leading-[1.12] tracking-tight">
-              Demystify What Every Active Component Does
-            </h2>
-
-            <p className="text-slate-100 text-base sm:text-lg leading-relaxed font-normal">
-              Every blister pack contains active chemicals that relieve pain, kill parasites, or open restricted airways. MedSure translates complex pharmacological jargon into everyday, plain language.
-            </p>
-
-            <div className="pt-2 space-y-2.5 text-xs text-slate-200">
-              <div className="flex items-start gap-2.5 p-2.5 rounded-xl bg-slate-900/60 border border-slate-800">
-                <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
-                <span><strong>Salbutamol:</strong> Relaxes and widens constricted bronchial tubes to allow oxygen in.</span>
+      {/* 5. CORE CLINICAL GUARDRAILS (Section ID: safety-engine) */}
+      <section id="safety-engine" className="story-section py-20 px-4 sm:px-8 lg:px-16 border-t border-slate-800/80 bg-slate-950 relative z-10">
+        <div className="max-w-5xl mx-auto">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+            <div className="space-y-6">
+              <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-xs font-bold uppercase tracking-wider">
+                Built-in Medical Safety
               </div>
-              <div className="flex items-start gap-2.5 p-2.5 rounded-xl bg-slate-900/60 border border-slate-800">
-                <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
-                <span><strong>Paracetamol:</strong> Blocks chemical messengers in the central nervous system that signal pain and fever.</span>
+              <h2 className="text-3xl sm:text-4xl md:text-5xl font-black text-white leading-tight">
+                Why Doctors &amp; Pharmacists Recommend MedSure
+              </h2>
+              <p className="text-slate-300 text-base leading-relaxed">
+                In Nigeria, there are fewer than <strong>4 licensed pharmacists per 10,000 citizens</strong>. When panic strikes at home, MedSure acts as your 24/7 digital health guardrail:
+              </p>
+
+              <div className="space-y-3.5 pt-2">
+                <div className="flex items-start gap-3 p-3.5 rounded-2xl bg-slate-900/80 border border-slate-800">
+                  <CheckCircle2 className="w-5 h-5 text-emerald-400 shrink-0 mt-0.5" />
+                  <div>
+                    <h4 className="text-sm font-bold text-white">Active Ingredient Translation</h4>
+                    <p className="text-xs text-slate-300 mt-0.5">Explains chemicals in human terms (e.g. how Salbutamol opens narrowed lungs so oxygen enters).</p>
+                  </div>
+                </div>
+
+                <div className="flex items-start gap-3 p-3.5 rounded-2xl bg-slate-900/80 border border-slate-800">
+                  <AlertTriangle className="w-5 h-5 text-amber-400 shrink-0 mt-0.5" />
+                  <div>
+                    <h4 className="text-sm font-bold text-white">Panic Overdose Warnings</h4>
+                    <p className="text-xs text-slate-300 mt-0.5">Explicitly warns against taking extra pills out of fear, preventing liver toxicity and heart stress.</p>
+                  </div>
+                </div>
+
+                <div className="flex items-start gap-3 p-3.5 rounded-2xl bg-slate-900/80 border border-slate-800">
+                  <Users className="w-5 h-5 text-cyan-400 shrink-0 mt-0.5" />
+                  <div>
+                    <h4 className="text-sm font-bold text-white">Licensed Pharmacist Review Queue</h4>
+                    <p className="text-xs text-slate-300 mt-0.5">Flagged suspect packs route straight to our clinician dashboard for remote pharmacist approval.</p>
+                  </div>
+                </div>
               </div>
             </div>
-          </div>
-        </div>
-      </section>
 
-      {/* SECTION 02: CODE GUARDRAILS */}
-      <section className="story-section s2 min-h-screen relative overflow-hidden z-[3] flex items-center px-6 sm:px-12 lg:px-20" id="access">
-        <div className="num reveal text-emerald-400/20 font-black text-[clamp(120px,18vw,260px)] absolute right-[4vw] top-[26vh] leading-none tracking-tighter select-none pointer-events-none">
-          02
-        </div>
+            {/* Interactive Feature Demo Card */}
+            <div className="glass-panel p-6 sm:p-8 rounded-3xl border border-emerald-500/30 bg-slate-900/80 shadow-2xl space-y-4">
+              <div className="flex items-center justify-between pb-3 border-b border-slate-800">
+                <div className="flex items-center gap-2">
+                  <span className="w-3 h-3 rounded-full bg-emerald-400 animate-ping" />
+                  <span className="text-xs font-mono font-bold text-emerald-400">Live Guardrail Verification</span>
+                </div>
+                <span className="text-[11px] font-mono text-slate-400">NAFDAC: 04-1234</span>
+              </div>
 
-        <div className="relative z-10 max-w-xl mr-auto">
-          <div className="glass-panel p-6 sm:p-8 rounded-3xl border border-white/10 shadow-2xl backdrop-blur-xl space-y-4">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/20 border border-emerald-500/30 text-xs text-emerald-300 font-bold uppercase tracking-wider">
-              Pillar 2 • Zero Hallucination
-            </div>
+              <div className="p-4 rounded-2xl bg-slate-950/90 border border-slate-800 space-y-3">
+                <div className="flex items-center justify-between">
+                  <span className="text-base font-bold text-white">Ventolin Inhaler (Salbutamol)</span>
+                  <span className="px-2.5 py-1 rounded-full bg-emerald-500/20 text-emerald-300 text-xs font-bold">
+                    ✓ Verified Clean
+                  </span>
+                </div>
+                <p className="text-xs text-slate-300 leading-relaxed">
+                  <strong>How it works:</strong> Relaxes and widens tightened airway muscle tubes in the lungs so oxygen can rush back in during an asthma attack.
+                </p>
+                <div className="p-2.5 rounded-xl bg-amber-950/40 border border-amber-500/30 text-amber-200 text-xs flex items-center gap-2">
+                  <span>⚠️ <strong>Panic Alert:</strong> Do not take continuous puffs out of panic. Follow spacing.</span>
+                </div>
+              </div>
 
-            <h2 className="text-[clamp(28px,3.5vw,48px)] font-extrabold text-white leading-[1.12] tracking-tight">
-              Deterministic Code-Based Safety Guardrails
-            </h2>
-
-            <p className="text-slate-100 text-base sm:text-lg leading-relaxed font-normal">
-              AI only extracts text and translates. All clinical safety decisions are 100% deterministic code. We cross-reference against 43 Nigerian Essential Medicines, official NAFDAC regex standards, and 14 cross-drug interaction rules.
-            </p>
-
-            <div className="p-3.5 rounded-2xl bg-emerald-950/40 border border-emerald-500/30 text-xs text-emerald-200 flex items-center gap-3">
-              <ShieldCheck className="w-5 h-5 text-emerald-400 shrink-0" />
-              <span>If an expiry date has passed or a NAFDAC number is suspect, dosage instructions are halted immediately.</span>
-            </div>
-
-            <div className="pt-2">
               <button
                 onClick={onOpenApp}
-                className="px-6 py-3 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-xs shadow-lg transition-all inline-flex items-center gap-2 cursor-pointer"
+                className="w-full py-3.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-sm transition-all"
               >
-                <span>Test Code Guardrails Live &rarr;</span>
+                Scan a Real Medicine Pack Now &rarr;
               </button>
             </div>
           </div>
         </div>
       </section>
 
-      {/* SECTION 03: MULTILINGUAL VOICE & PHARMACIST ESCALATION */}
-      <section className="story-section s3 min-h-screen relative overflow-hidden z-[1] flex items-center px-6 sm:px-12 lg:px-20">
-        <div className="num reveal text-cyan-400/20 font-black text-[clamp(120px,18vw,260px)] absolute left-[4vw] top-[28vh] leading-none tracking-tighter select-none pointer-events-none">
-          03
-        </div>
+      {/* 6. ACETERNITY 3D GLOBE DEMO (African & Global Healthcare Impact) */}
+      <div id="africa-impact">
+        <Globe3DDemo />
+      </div>
 
-        <div className="relative z-10 max-w-xl ml-auto">
-          <div className="glass-panel p-6 sm:p-8 rounded-3xl border border-white/10 shadow-2xl backdrop-blur-xl space-y-4">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-cyan-500/20 border border-cyan-500/30 text-xs text-cyan-300 font-bold uppercase tracking-wider">
-              Pillar 3 • Inclusive &amp; Clinician-Backed
-            </div>
+      {/* 7. ACETERNITY ANIMATED TESTIMONIALS DEMO */}
+      <AnimatedTestimonialsDemo />
 
-            <h2 className="text-[clamp(28px,3.5vw,48px)] font-extrabold text-white leading-[1.12] tracking-tight">
-              Multilingual Voice Notes &amp; Pharmacist Escalation
-            </h2>
-
-            <p className="text-slate-100 text-base sm:text-lg leading-relaxed font-normal">
-              Built for every Nigerian household regardless of literacy. Listen to spoken safety instructions in English, Nigerian Pidgin, Yorùbá, Hausa, or Igbo. Flagged packages route straight to our licensed Pharmacist Review Portal.
-            </p>
-
-            <div className="flex flex-wrap gap-2 pt-1 text-xs">
-              {['🇬🇧 English', '🇳🇬 Naija Pidgin', '🇳🇬 Yorùbá', '🇳🇬 Hausa', '🇳🇬 Igbo'].map((lang) => (
-                <span key={lang} className="px-3 py-1.5 rounded-lg bg-slate-900 border border-slate-700 text-slate-200 font-semibold">
-                  {lang}
-                </span>
-              ))}
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* FOOTER CALL TO ACTION */}
-      <section className="story-section foot min-h-screen relative overflow-hidden z-[1] flex flex-col justify-between p-6 sm:p-12" id="contact">
-        <div className="my-auto text-center max-w-2xl mx-auto space-y-6 z-10">
-          <div className="w-14 h-14 rounded-2xl bg-emerald-500/20 border border-emerald-500/30 flex items-center justify-center mx-auto shadow-lg shadow-emerald-500/20">
-            <Pill className="w-7 h-7 text-emerald-400" />
+      {/* 8. FINAL HIGH-IMPACT LAUNCH CTA */}
+      <section className="story-section py-20 px-4 sm:px-8 border-t border-slate-800/80 bg-slate-950 relative z-10 text-center">
+        <div className="max-w-2xl mx-auto space-y-6">
+          <div className="w-16 h-16 rounded-2xl bg-emerald-500/20 border border-emerald-500/40 flex items-center justify-center mx-auto shadow-xl shadow-emerald-500/20">
+            <Pill className="w-8 h-8 text-emerald-400" />
           </div>
 
-          <h2 className="text-[clamp(32px,4.5vw,64px)] font-extrabold text-white leading-tight">
-            Ready to Protect Your Family?
+          <h2 className="text-3xl sm:text-5xl font-black text-white tracking-tight">
+            Protect Yourself &amp; Your Loved Ones Today
           </h2>
 
-          <p className="text-slate-200 text-base sm:text-lg max-w-lg mx-auto font-normal">
-            Take a photo of any medicine pack, test our cross-drug cabinet interactions, or test-drive the clinician review queue now.
+          <p className="text-slate-300 text-base sm:text-lg">
+            Free, open source, and works on any phone browser. No app store download required.
           </p>
 
-          <div className="pt-4">
+          <div className="pt-2">
             <button
               onClick={onOpenApp}
-              className="px-8 py-4 rounded-2xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-extrabold text-base shadow-[0_0_50px_rgba(16,185,129,0.45)] transition-all inline-flex items-center gap-3 cursor-pointer"
+              className="px-9 py-4 rounded-2xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black text-base sm:text-lg shadow-[0_0_40px_rgba(16,185,129,0.45)] transition-all cursor-pointer active:scale-95"
             >
-              <span>Launch Live MedSure App &rarr;</span>
+              Launch Live Medicine Scanner &rarr;
             </button>
           </div>
-        </div>
 
-        <div className="flex flex-col sm:flex-row items-center justify-between border-t border-slate-800/80 pt-6 gap-4 z-10 text-xs text-slate-400">
-          <div>
-            <strong className="text-base font-bold text-white block">MedSure Nigeria</strong>
-            <span>AI Vision • Deterministic Code Guardrails • Multilingual Audio</span>
-          </div>
-          <div>
-            <span>OPEN//BUILD Hackathon Prototype • 43 Nigerian Essential Medicines</span>
+          <div className="pt-8 border-t border-slate-900 flex flex-col sm:flex-row items-center justify-between text-xs text-slate-500 gap-2">
+            <span>MedSure Nigeria · OSCA Ile-Ife Hacktoberfest 2026</span>
+            <span>43 Nigerian Essential Medicines · Zero AI Hallucination</span>
           </div>
         </div>
       </section>

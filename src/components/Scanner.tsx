@@ -1,7 +1,15 @@
-'use client';
-
 import React, { useState, useRef } from 'react';
 import { Camera, Upload, Search, Sparkles, RefreshCw, AlertCircle, FileText } from 'lucide-react';
+import { MultiStepLoader } from '@/components/ui/multi-step-loader';
+
+const medsureAnalysisSteps = [
+  { text: "📸 Reading packaging text, foil blister & typography..." },
+  { text: "🔍 Identifying active pharmaceutical molecules & strength..." },
+  { text: "🏛️ Validating official Nigerian NAFDAC registration..." },
+  { text: "⏳ Calculating exact expiration date & remaining days..." },
+  { text: "🛡️ Checking contraindications, NSAID/Sulfa allergy risks..." },
+  { text: "🗣️ Translating clinical explanation into chosen native language..." }
+];
 
 interface ScannerProps {
   onScanImage: (base64: string, mimeType: string) => void;
@@ -78,6 +86,9 @@ export default function Scanner({ onScanImage, onSearchName, isLoading }: Scanne
 
   return (
     <div className="w-full space-y-4">
+      {/* High-Tech Analysis MultiStepLoader */}
+      <MultiStepLoader loadingStates={medsureAnalysisSteps} loading={isLoading} duration={1000} />
+
       {/* Viewfinder & Upload Box */}
       <div
         onDragOver={(e) => { e.preventDefault(); setDragActive(true); }}
