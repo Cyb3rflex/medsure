@@ -41,6 +41,20 @@ export const metadata: Metadata = {
     siteName: 'MedSure Nigeria',
     locale: 'en_NG',
     type: 'website',
+    images: [
+      {
+        url: '/og-image.png',
+        width: 1200,
+        height: 630,
+        alt: 'MedSure — AI Medicine Verification & Safety Guardrails for Africa',
+      },
+      {
+        url: '/logo.png',
+        width: 512,
+        height: 512,
+        alt: 'MedSure Logo',
+      },
+    ],
   },
   twitter: {
     card: 'summary_large_image',
@@ -48,6 +62,17 @@ export const metadata: Metadata = {
     description:
       'Deterministic code guardrails + Open-weight AI protecting African families against fake drugs and fatal drug clashes. Spoken in Yoruba, Hausa, Igbo & Pidgin.',
     creator: '@cyb3rflex',
+    images: ['/og-image.png'],
+  },
+  icons: {
+    icon: [
+      { url: '/icon.svg', type: 'image/svg+xml' },
+      { url: '/icon.png', sizes: '512x512', type: 'image/png' },
+    ],
+    apple: [
+      { url: '/apple-touch-icon.png', sizes: '180x180', type: 'image/png' },
+    ],
+    shortcut: '/icon.svg',
   },
   robots: {
     index: true,

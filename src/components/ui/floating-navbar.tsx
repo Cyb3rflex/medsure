@@ -71,7 +71,7 @@ export const FloatingNav = ({
             onClick={() => onTabChange?.('story')}
             className="flex items-center gap-1.5 pl-1.5 pr-2.5 py-1 rounded-full bg-emerald-500/15 border border-emerald-500/30 text-white font-bold text-xs sm:text-sm tracking-tight hover:bg-emerald-500/25 transition-all select-none"
           >
-            <span className="text-sm sm:text-base">🛡️</span>
+            <img src="/icon.svg" alt="MedSure Logo" className="w-5 h-5 rounded-md object-contain shadow-sm" />
             <span className="text-emerald-400 font-black">MedSure</span>
           </button>
 

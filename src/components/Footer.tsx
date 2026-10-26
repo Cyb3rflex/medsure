@@ -14,7 +14,7 @@ export default function Footer({ onNavigateTab }: FooterProps) {
           {/* Brand & Purpose */}
           <div className="md:col-span-1 space-y-3">
             <div className="flex items-center gap-2">
-              <span className="text-xl">🛡️</span>
+              <img src="/icon.svg" alt="MedSure Logo" className="w-6 h-6 rounded-md object-contain shadow-sm" />
               <span className="text-lg font-black text-white tracking-tight">MedSure</span>
               <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-emerald-500/15 border border-emerald-500/30 text-emerald-400 font-bold">
                 Nigeria
