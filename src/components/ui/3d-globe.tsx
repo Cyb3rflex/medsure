@@ -11,6 +11,11 @@ export interface GlobeMarker {
   src: string;
   label?: string;
   size?: number;
+  city?: string;
+  country?: string;
+  details?: string;
+  tag?: string;
+  language?: string;
 }
 
 export interface Globe3DConfig {
@@ -133,20 +138,37 @@ function Marker({
 
   return (
     <group ref={groupRef} visible={isVisible}>
-      <mesh position={lineCenter} quaternion={lineQuaternion}>
-        <cylinderGeometry args={[0.003, 0.003, lineHeight, 8]} />
+      {/* Pin line */}
+      <mesh
+        position={lineCenter}
+        quaternion={lineQuaternion}
+        onPointerEnter={handlePointerEnter}
+        onPointerLeave={handlePointerLeave}
+        onClick={handleClick}
+        onPointerDown={handleClick}
+      >
+        <cylinderGeometry args={[0.005, 0.005, lineHeight, 8]} />
         <meshBasicMaterial
           color={hovered ? "#34d399" : "#10b981"}
           transparent
-          opacity={hovered ? 0.95 : 0.65}
+          opacity={hovered ? 1.0 : 0.75}
         />
       </mesh>
 
-      <mesh position={surfacePosition} quaternion={lineQuaternion}>
-        <coneGeometry args={[0.02, 0.05, 8]} />
-        <meshBasicMaterial color={hovered ? "#34d399" : "#10b981"} />
+      {/* Surface pin point */}
+      <mesh
+        position={surfacePosition}
+        quaternion={lineQuaternion}
+        onPointerEnter={handlePointerEnter}
+        onPointerLeave={handlePointerLeave}
+        onClick={handleClick}
+        onPointerDown={handleClick}
+      >
+        <coneGeometry args={[0.025, 0.06, 8]} />
+        <meshBasicMaterial color={hovered ? "#6ee7b7" : "#10b981"} />
       </mesh>
 
+      {/* Circular image badge at the top with generous touch target */}
       <group ref={imageGroupRef} position={topPosition}>
         <Html
           transform
@@ -156,28 +178,45 @@ function Marker({
           style={{
             pointerEvents: isVisible ? "auto" : "none",
             opacity: isVisible ? 1 : 0,
-            transition: "opacity 0.15s ease-out",
+            transition: "opacity 0.2s ease-out",
           }}
         >
           <div
-            className={cn(
-              "cursor-pointer overflow-hidden rounded-full bg-slate-900 shadow-lg transition-transform duration-200 border border-emerald-400/50",
-              hovered && "scale-150 shadow-xl ring-2 ring-emerald-400"
-            )}
-            style={{
-              width: "12px",
-              height: "12px",
-            }}
+            className="p-1 cursor-pointer select-none group"
             onMouseEnter={handlePointerEnter}
             onMouseLeave={handlePointerLeave}
             onClick={handleClick}
+            onTouchStart={handleClick}
+            onPointerDown={handleClick}
           >
-            <img
-              src={marker.src}
-              alt={marker.label || "Marker"}
-              className="h-full w-full object-cover"
-              draggable={false}
-            />
+            <div
+              className={cn(
+                "relative overflow-hidden rounded-full bg-slate-950 shadow-xl transition-all duration-200 border-2",
+                hovered
+                  ? "scale-140 border-emerald-300 ring-4 ring-emerald-400/40 shadow-emerald-500/50"
+                  : "border-emerald-400/80 hover:border-emerald-300 hover:scale-125"
+              )}
+              style={{
+                width: "20px",
+                height: "20px",
+              }}
+            >
+              <img
+                src={marker.src}
+                alt={marker.label || "Marker"}
+                className="h-full w-full object-cover"
+                draggable={false}
+              />
+              {/* Pulsing beacon ring */}
+              <span className="absolute inset-0 rounded-full bg-emerald-400/20 animate-ping pointer-events-none" />
+            </div>
+
+            {/* Micro city label visible on hover */}
+            {hovered && marker.city && (
+              <div className="absolute top-full left-1/2 -translate-x-1/2 mt-1 px-2 py-0.5 rounded-md bg-slate-900/95 border border-emerald-500/50 text-[10px] text-emerald-300 font-bold whitespace-nowrap shadow-lg pointer-events-none z-50">
+                {marker.city}
+              </div>
+            )}
           </div>
         </Html>
       </group>

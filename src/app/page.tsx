@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import { FloatingNav } from '@/components/ui/floating-navbar';
 import Header from '@/components/Header';
 import EmergencyBanner from '@/components/EmergencyBanner';
 import Scanner from '@/components/Scanner';
@@ -141,17 +142,15 @@ export default function Home() {
 
   return (
     <div className="flex-1 flex flex-col">
-      {/* Global Navigation Header: Only shown inside clinical app tabs. Story tab uses the Aceternity Floating Navbar */}
-      {activeTab !== 'story' && (
-        <Header
-          currentLanguage={currentLanguage}
-          onLanguageChange={setCurrentLanguage}
-          activeTab={activeTab}
-          onTabChange={setActiveTab}
-          flaggedCount={pharmacistQueue.filter(q => q.status === 'pending').length}
-          cabinetCount={cabinet.length}
-        />
-      )}
+      {/* Universal Floating Navbar across the whole site */}
+      <FloatingNav
+        activeTab={activeTab}
+        onTabChange={setActiveTab}
+        currentLanguage={currentLanguage}
+        onLanguageChange={setCurrentLanguage}
+        flaggedCount={pharmacistQueue.filter(q => q.status === 'pending').length}
+        cabinetCount={cabinet.length}
+      />
 
       {/* Tab 0: Inbuilt 3D Story Landing Page */}
       {activeTab === 'story' && (
@@ -160,7 +159,7 @@ export default function Home() {
 
       {/* Main Clinical Dashboard Tabs */}
       {activeTab !== 'story' && (
-        <main className="flex-1 max-w-6xl w-full mx-auto p-4 sm:p-6 lg:p-8 space-y-6">
+        <main className="flex-1 max-w-6xl w-full mx-auto p-4 sm:p-6 lg:p-8 pt-24 sm:pt-28 space-y-6">
           {/* Real-Life Emergency Banner (Addressing Home Panic & Respiratory Attacks) */}
           <EmergencyBanner
             currentLanguage={currentLanguage}

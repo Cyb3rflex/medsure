@@ -22,7 +22,6 @@ import {
   ExternalLink
 } from 'lucide-react';
 import Globe3DDemo from '@/components/3d-globe-demo';
-import FloatingNavDemo from '@/components/floating-navbar-demo';
 import AnimatedTestimonialsDemo from '@/components/animated-testimonials-demo';
 import ParticleBackground from '@/components/ParticleBackground';
 
@@ -383,10 +382,7 @@ export default function MedSureLanding3D({ onOpenApp }: MedSureLanding3DProps) {
       {/* 1. FLOATING PARTICLES CANVAS ACROSS SITE */}
       <ParticleBackground />
 
-      {/* 2. ACETERNITY FLOATING NAVBAR (Only ONE Navbar on the Landing Experience) */}
-      <FloatingNavDemo onLaunchApp={onOpenApp} />
-
-      {/* 3. THREE.JS 3D ACCENT CANVAS */}
+      {/* 2. THREE.JS 3D ACCENT CANVAS */}
       <canvas
         ref={canvasRef}
         id="bee"
