@@ -134,9 +134,10 @@ export const FloatingNav = ({
               {/* Primary Call To Action Button */}
               <button
                 onClick={() => onTabChange?.('patient')}
-                className="relative rounded-full bg-emerald-500 hover:bg-emerald-400 text-slate-950 px-3 sm:px-4 py-1.5 text-xs sm:text-sm font-black transition-all shadow-md shadow-emerald-500/25 hover:shadow-emerald-500/40 active:scale-95 flex items-center gap-1.5 cursor-pointer"
+                className="relative rounded-full bg-emerald-500 hover:bg-emerald-400 text-slate-950 px-2.5 sm:px-4 py-1.5 text-xs sm:text-sm font-black transition-all shadow-md shadow-emerald-500/25 hover:shadow-emerald-500/40 active:scale-95 flex items-center gap-1 sm:gap-1.5 cursor-pointer whitespace-nowrap"
               >
-                <span>Scan Medicine</span>
+                <span className="hidden xs:inline sm:inline">Scan Medicine</span>
+                <span className="inline xs:hidden sm:hidden">Scan</span>
                 <span className="text-xs">📸</span>
               </button>
             </>
