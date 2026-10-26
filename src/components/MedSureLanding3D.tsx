@@ -466,7 +466,7 @@ export default function MedSureLanding3D({ onOpenApp }: MedSureLanding3DProps) {
               What Was Meant To Be A Cure Led To Tragedy
             </h2>
             <p className="text-sm sm:text-base text-slate-300 leading-relaxed">
-              Every day across Nigerian towns, preventable deaths happen not because medicine doesn't exist, but because of <strong>illiteracy, counterfeit packs, and sheer panic</strong>:
+              Behind every preventable tragedy in our towns lies the same painful truth: safe medicine was available, but <strong>unreadable packaging, counterfeit batches, and panic dosage turned cure into crisis</strong>:
             </p>
           </div>
 

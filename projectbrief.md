@@ -1,7 +1,7 @@
 Project Brief 
 Basic Build - Problem:
 In the suburbs of Northern Nigeria, the local residents of Ajala town would often complain of stomach upset after taking a locally recommended, sub-standard, medication by their so-called Chemist. 
-Down in the riverine areas, a popular city has recorded over 18,000 cases of allergy from drugs. These have led to unchangeable mutations in the lives of some people, due to consistent intake of those medications without knowing they contained the ingredient of their allergy.
+Down in the riverine areas, a popular city has recorded over 18,000 cases of allergy from drugs. These have led to unchangeable mutations in the lives of some people, due to consistent intake of those medications without knowing it contains the component they are allergic to.
 There was another case of over-dose to a 19 year old girl, who just finished examinations at a famous university in Ondo state. She never intended to kill herself. Due to sheer ignorance, she couldn't help but be overwhelmed by the desire to see her migraine leave.
 Finally, in the southern part of the nation, there was a popular case of a king who lost his life due to the wrong combinations of medications when he battled diabetes.
 
