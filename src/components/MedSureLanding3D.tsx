@@ -395,8 +395,8 @@ export default function MedSureLanding3D({ onOpenApp }: MedSureLanding3DProps) {
       {/* SECTION 0: HERO (Instant Clarity for Patients, Caregivers & Hackathon Judges) */}
       {/* ========================================================================= */}
       <section className="story-section hero min-h-[92vh] relative overflow-hidden z-10 flex flex-col justify-center px-4 sm:px-8 lg:px-16 pt-28 pb-16" id="hero">
-        {/* Aceternity UI Background Beams brought down nicely below the floating navbar */}
-        <BackgroundBeams className="top-16 sm:top-20 md:top-24 translate-y-6 md:translate-y-12 opacity-80 pointer-events-none" />
+        {/* Aceternity UI Background Beams filling the entire hero section */}
+        <BackgroundBeams className="absolute inset-0 w-full h-full opacity-85 pointer-events-none" />
 
         <div className="max-w-4xl mx-auto text-center space-y-6 relative z-10">
           {/* OSCA Hacktoberfest Challenge Badge */}
