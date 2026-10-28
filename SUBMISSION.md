@@ -106,7 +106,7 @@ MedSure is fully open-source and reproducible:
 - Detailed setup instructions are in [`README.md`](file:///c:/Users/Cyberflex/Documents/medsure/README.md).
 - Quickstart locally:
   ```bash
-  git clone https://github.com/[YOUR-USERNAME]/medsure.git
+  git clone https://github.com/Cyb3rflex/medsure.git
   cd medsure
   npm install
   npm run dev
