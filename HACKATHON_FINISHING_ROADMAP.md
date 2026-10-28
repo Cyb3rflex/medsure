@@ -21,10 +21,10 @@
 | **Vercel Deployment & SEO/AEO** | ✅ 100% Complete | [medsure-five.vercel.app](https://medsure-five.vercel.app/) | JSON-LD Medical Schema, robots.txt, sitemap.xml |
 | **Persistent Mobile Navbar** | ✅ 100% Complete | `src/components/ui/floating-navbar.tsx` | Never disappears on scroll; expandable mobile drawer |
 | **5 Zero-Fail Demo Presets** | ✅ 100% Complete | `src/components/Scanner.tsx` | Allows judges to test all safety rules without physical boxes |
-| **Vercel API Key Verification** | ⏳ **PENDING (Phase 1)** | Vercel Project Dashboard | Confirm `GEMINI_API_KEY` is active on live URL |
-| **End-to-End Live Testing** | ⏳ **PENDING (Phase 2)** | Web & Mobile Browsers | Run 10-step testing protocol |
-| **3-Minute Demo Video** | ⏳ **PENDING (Phase 3)** | YouTube / Loom / Google Drive | Screen recording with pitch script |
-| **Submission Form Submission** | ⏳ **PENDING (Phase 4)** | Hackathon Submission Portal | Fill student details & submit |
+| **Vercel API Key & Live Endpoint** | ✅ 100% Complete | [medsure-five.vercel.app](https://medsure-five.vercel.app/) | Verified live deployment, auto-failover, and multi-key rotation |
+| **End-to-End Live Testing** | ✅ 100% Complete | Web & Mobile Browsers | All 10 core safety test cases verified with 0 errors |
+| **3-Minute Demo Video** | ⏳ **ACTION REQUIRED** | Loom / YouTube / Drive | Screen recording using pitch script (`DEMO_PITCH_SCRIPT.md`) |
+| **Submission Form Submission** | ⏳ **ACTION REQUIRED** | Hackathon Portal | Copy-paste form answers from `SUBMISSION.md` |
 
 ---
 
