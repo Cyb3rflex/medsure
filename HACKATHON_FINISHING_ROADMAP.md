@@ -11,7 +11,7 @@
 | Component | Status | Location | Notes |
 |---|---|---|---|
 | **Deterministic Safety Engine** | ✅ 100% Complete | `src/lib/safetyRules.ts` | 43 Nigerian Essential Medicines, 14 clash rules, NAFDAC regex |
-| **Multimodal Vision OCR & AI** | ✅ 100% Complete | `src/lib/gemini.ts` | Vision extraction + Plain-language active ingredient breakdown |
+| **Multimodal Vision OCR & AI** | ✅ 100% Complete | `src/lib/gemini.ts` | Gemini 3.8 Flash + automatic fallback list + non-drug image rejection & in-app alerts |
 | **Multilingual Voice Notes** | ✅ 100% Complete | `src/components/VoicePlayer.tsx` | Yorùbá, Hausa, Igbo, Pidgin, English TTS with wave visualizer |
 | **Interactive 3D Africa Globe** | ✅ 100% Complete | `src/components/3d-globe-demo.tsx` | 18 regional medical hubs, mobile-optimized height & raycasting |
 | **Home Medicine Cabinet** | ✅ 100% Complete | `src/components/CabinetView.tsx` | Cross-drug interaction matrix checker |

@@ -1,4 +1,6 @@
 export interface ExtractedMedicine {
+  is_medicine?: boolean;
+  rejection_reason?: string;
   medicine_name: string;
   strength: string;
   batch_number: string;
@@ -10,7 +12,14 @@ export interface ExtractedMedicine {
 
 export type SupportedLanguage = 'en' | 'pidgin' | 'yoruba' | 'hausa' | 'igbo';
 
-const GEMINI_MODEL = 'gemini-2.5-flash';
+// Candidate models in priority order for ultra-high availability
+const CANDIDATE_MODELS = [
+  'gemini-3.8-flash',
+  'gemini-1.5-flash',
+  'gemini-2.0-flash',
+  'gemini-flash-latest',
+  'gemini-pro-latest'
+];
 
 export async function callGemini(contents: any[], systemInstruction?: string) {
   const apiKey = process.env.GEMINI_API_KEY;
@@ -18,56 +27,83 @@ export async function callGemini(contents: any[], systemInstruction?: string) {
     throw new Error('GEMINI_API_KEY is not configured in the environment.');
   }
 
-  const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent?key=${apiKey}`;
+  let lastError: Error | null = null;
 
-  const payload: any = {
-    contents,
-    generationConfig: {
-      temperature: 0.2,
-      maxOutputTokens: 2048,
+  for (const model of CANDIDATE_MODELS) {
+    try {
+      const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
+
+      const payload: any = {
+        contents,
+        generationConfig: {
+          temperature: 0.2,
+          maxOutputTokens: 2048,
+        }
+      };
+
+      if (systemInstruction) {
+        payload.systemInstruction = {
+          parts: [{ text: systemInstruction }]
+        };
+      }
+
+      const res = await fetch(endpoint, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+
+      if (!res.ok) {
+        const errorText = await res.text();
+        // If 404, not found, or model deprecated, fall back to next model
+        if (res.status === 404 || errorText.includes('NOT_FOUND') || errorText.includes('is no longer available')) {
+          console.warn(`Gemini model ${model} unavailable (HTTP ${res.status}), trying next candidate...`);
+          lastError = new Error(`Gemini API error (${res.status}): ${errorText}`);
+          continue;
+        }
+        throw new Error(`Gemini API error (${res.status}): ${errorText}`);
+      }
+
+      const data = await res.json();
+      const text = data.candidates?.[0]?.content?.parts?.[0]?.text;
+      if (!text) {
+        throw new Error('No response returned from Gemini.');
+      }
+      return text;
+    } catch (err: any) {
+      lastError = err;
+      if (err.message && (err.message.includes('404') || err.message.includes('NOT_FOUND') || err.message.includes('not available'))) {
+        continue;
+      }
+      throw err;
     }
-  };
-
-  if (systemInstruction) {
-    payload.systemInstruction = {
-      parts: [{ text: systemInstruction }]
-    };
   }
 
-  const res = await fetch(endpoint, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(payload)
-  });
-
-  if (!res.ok) {
-    const errorText = await res.text();
-    throw new Error(`Gemini API error (${res.status}): ${errorText}`);
-  }
-
-  const data = await res.json();
-  const text = data.candidates?.[0]?.content?.parts?.[0]?.text;
-  if (!text) {
-    throw new Error('No response returned from Gemini.');
-  }
-  return text;
+  throw lastError || new Error('All candidate Gemini models failed to generate content.');
 }
 
 // 1. Vision Extraction from Photo
 export async function extractMedicineFromPhoto(base64Image: string, mimeType: string = 'image/jpeg'): Promise<ExtractedMedicine> {
-  const systemPrompt = `You are an expert pharmaceutical vision OCR model specializing in reading medicine packaging, strips, blister packs, and bottles sold in Nigeria and West Africa.
-Your task is to extract exact text from the image into a valid JSON object.
-Do not guess or assume. Only return valid JSON with no markdown wrapping or extra text.
+  const systemPrompt = `You are an expert pharmaceutical vision OCR and clinical safety model specializing in verifying medicine packaging, blister strips, foil packs, syrup bottles, vials, and sachets sold in Nigeria and West Africa.
+
+CRITICAL FIRST RULE — PHARMACEUTICAL IDENTIFICATION:
+Carefully inspect the image to determine whether it actually depicts a medicine, pharmaceutical package, prescription label, blister strip, tablet, capsule, or syrup bottle.
+- If the image is NOT a medicine (for example: a pet, an animal, a human selfie/face, food, beverage, furniture, document, clothing, car, electronic device, household item, or random object), you MUST set "is_medicine": false and set "rejection_reason" to a polite, specific explanation (e.g. "The uploaded photo appears to be a pet/food/household object, not a pharmaceutical medication package.").
+- If the image IS a medication, pharmaceutical pack, blister strip, or syrup bottle, you MUST set "is_medicine": true and set "rejection_reason" to "".
+
+Do not guess or fabricate information. Return only a valid JSON object with no markdown formatting or extra commentary.
 
 JSON format:
 {
-  "medicine_name": "string (brand or generic name as written)",
-  "strength": "string (e.g. 500mg, 100mg/5ml)",
-  "batch_number": "string (or empty if not found)",
-  "expiry_date": "string in YYYY-MM or MM/YY or as found",
-  "nafdac_number": "string (Nigerian NAFDAC registration, usually formatted like 04-1234 or A4-5678 or NR-0123)",
+  "is_medicine": true | false,
+  "rejection_reason": "string (empty if is_medicine is true, or descriptive explanation if not a medicine)",
+  "medicine_name": "string (brand or generic name as printed, or empty if not a medicine)",
+  "strength": "string (e.g. 500mg, 100mg/5ml, or empty)",
+  "batch_number": "string (or empty if not visible)",
+  "expiry_date": "string in YYYY-MM or MM/YY or as printed",
+  "nafdac_number": "string (official Nigerian NAFDAC code, e.g. 04-1234 or A4-5678, or empty)",
   "confidence": "high|medium|low",
-  "raw_text_detected": "summary of key text visible"
+  "raw_text_detected": "string (summary of any readable text on package)"
 }`;
 
   const imagePart = {
@@ -78,7 +114,7 @@ JSON format:
   };
 
   const userPromptPart = {
-    text: "Extract the medicine name, strength, batch number, expiry date, and Nigerian NAFDAC number from this medicine package."
+    text: "Analyze this image: check if it is a medicine or pharmaceutical product. If yes, extract the medicine name, strength, batch number, expiry date, and official Nigerian NAFDAC registration number."
   };
 
   const raw = await callGemini([{ parts: [imagePart, userPromptPart] }], systemPrompt);
@@ -86,10 +122,16 @@ JSON format:
   // Clean JSON response (strip markdown fences if any)
   const cleaned = raw.replace(/```json/gi, '').replace(/```/g, '').trim();
   try {
-    return JSON.parse(cleaned) as ExtractedMedicine;
+    const parsed = JSON.parse(cleaned) as ExtractedMedicine;
+    // Default is_medicine to true if not explicitly false and name is found
+    if (parsed.is_medicine === undefined) {
+      parsed.is_medicine = Boolean(parsed.medicine_name && parsed.medicine_name.toLowerCase() !== 'unknown');
+    }
+    return parsed;
   } catch (err) {
     console.error('Failed to parse Gemini JSON:', raw);
     return {
+      is_medicine: true,
       medicine_name: 'Unknown Medicine',
       strength: '',
       batch_number: '',

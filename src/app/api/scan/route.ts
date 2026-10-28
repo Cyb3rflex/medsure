@@ -16,9 +16,20 @@ export async function POST(req: NextRequest) {
       confidence: 'high' as 'high' | 'medium' | 'low',
     };
 
-    // 1. If photo is uploaded, run Gemini Vision OCR
+    // 1. If photo is uploaded, run Gemini Vision OCR & Pharmaceutical Check
     if (image) {
       const visionResult = await extractMedicineFromPhoto(image, mimeType || 'image/jpeg');
+
+      // Intercept non-medicine uploads (e.g. random objects, food, pets, documents)
+      if (visionResult.is_medicine === false) {
+        return NextResponse.json({
+          success: false,
+          isNotMedicine: true,
+          rejectionReason: visionResult.rejection_reason || 'This photo does not appear to be a medicine or pharmaceutical product. Please point your camera at a medication packaging, blister strip, syrup bottle, or sachet.',
+          error: visionResult.rejection_reason || 'This photo does not appear to be a medicine or pharmaceutical product. Please point your camera at a medicine package or bottle.'
+        }, { status: 422 });
+      }
+
       extractedData = {
         medicine_name: visionResult.medicine_name || medicineName || 'Unknown Medicine',
         strength: visionResult.strength || '',
