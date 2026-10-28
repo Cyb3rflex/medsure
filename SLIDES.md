@@ -9,7 +9,7 @@
 ## Slide 1: Title & The Human Problem
 **Title:** MedSure — AI-Powered Medicine Safety & Emergency Voice Triage  
 **Subtitle:** *Building for a world where no mother, student, or patient dies from preventable medicine ignorance.*  
-**Presenters:** [Team Member 1] & [Team Member 2] — [University Name]
+**Presenters:** Gospel Arinze & Abdulmuheez Quazeem
 
 ### Key Content & Visuals:
 * **The Reality in Nigeria:**
