@@ -58,8 +58,13 @@ export default function Home() {
     }
   }, []);
 
-  // 1. Scan image with Gemini Flash Vision
-  const handleScanImage = async (base64Image: string, mimeType: string) => {
+  // 1. Scan image with Gemini Flash Vision (Supports Front + Back/Flap Multi-Angle)
+  const handleScanImage = async (
+    base64Image: string, 
+    mimeType: string,
+    secondaryBase64?: string,
+    secondaryMimeType?: string
+  ) => {
     setIsLoading(true);
     setNonMedicineWarning(null);
     setScanError(null);
@@ -73,6 +78,8 @@ export default function Home() {
         body: JSON.stringify({
           image: base64Image,
           mimeType,
+          secondaryImage: secondaryBase64,
+          secondaryMimeType,
           language: currentLanguage,
           cabinet
         })
@@ -87,6 +94,10 @@ export default function Home() {
         if (!data.safetyResult.isClean) {
           queueForPharmacist(data);
         }
+        setTimeout(() => {
+          const el = document.getElementById('safety-result-section');
+          el?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }, 200);
       } else if (data.isNotMedicine) {
         setScanResult(null);
         setScanError(null);
@@ -133,6 +144,10 @@ export default function Home() {
         if (!data.safetyResult.isClean) {
           queueForPharmacist(data);
         }
+        setTimeout(() => {
+          const el = document.getElementById('safety-result-section');
+          el?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }, 200);
       } else {
         setScanResult(null);
         setNonMedicineWarning(null);
@@ -147,7 +162,38 @@ export default function Home() {
     }
   };
 
-  // 3. Queue item for Pharmacist Review
+  // 3. Queue patient voice complaint for Pharmacist Review
+  const handleReferComplaintToPharmacist = (complaintData: {
+    situation: string;
+    triageLevel: string;
+    urgencyTitle: string;
+    immediateActions: string[];
+    detectedMedicines: string[];
+  }) => {
+    const newItem: PharmacistReviewItem = {
+      id: 'RX-VOICE-' + Math.floor(1000 + Math.random() * 9000),
+      timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+      caseType: 'voice_complaint',
+      medicineName: complaintData.detectedMedicines?.[0] ? `Voice Consultation (${complaintData.detectedMedicines.join(', ')})` : 'Patient Voice Complaint',
+      patientComplaint: complaintData.situation,
+      triageLevel: complaintData.triageLevel,
+      immediateActions: complaintData.immediateActions,
+      extractedData: {
+        triage_title: complaintData.urgencyTitle,
+        detected_medicines: complaintData.detectedMedicines
+      },
+      flags: [
+        `Urgency: ${complaintData.urgencyTitle}`,
+        ...(complaintData.immediateActions || [])
+      ],
+      status: 'pending'
+    };
+
+    setPharmacistQueue(prev => [newItem, ...prev]);
+    setActiveTab('pharmacist');
+  };
+
+  // 4. Queue item for Pharmacist Review
   const queueForPharmacist = (data: any) => {
     const newItem: PharmacistReviewItem = {
       id: 'RX-' + Math.floor(1000 + Math.random() * 9000),
@@ -208,8 +254,9 @@ export default function Home() {
           {/* Real-Life Emergency Banner (Addressing Home Panic & Respiratory Attacks) */}
           <EmergencyBanner
             currentLanguage={currentLanguage}
-            onAskSymptom={(symptom) => {
-              handleSearchName(symptom);
+            onReferToPharmacist={handleReferComplaintToPharmacist}
+            onScanMedicine={(med) => {
+              handleSearchName(med);
             }}
           />
 
@@ -220,6 +267,7 @@ export default function Home() {
               onScanImage={handleScanImage}
               onSearchName={handleSearchName}
               isLoading={isLoading}
+              scanResult={scanResult}
             />
 
             {isLoading && (
@@ -362,15 +410,17 @@ export default function Home() {
             )}
 
             {scanResult && !isLoading && (
-              <SafetyResultView
-                scanData={scanResult}
-                currentLanguage={currentLanguage}
-                onLanguageChange={setCurrentLanguage}
-                onAddToCabinet={handleAddToCabinet}
-                isInCabinet={cabinet.some(c => c.ID === scanResult.medicineRecord?.ID)}
-                onEscalateToPharmacist={() => queueForPharmacist(scanResult)}
-                isEscalated={pharmacistQueue.some(q => q.medicineName === scanResult.medicineRecord?.Medicine)}
-              />
+              <div id="safety-result-section" className="scroll-mt-32">
+                <SafetyResultView
+                  scanData={scanResult}
+                  currentLanguage={currentLanguage}
+                  onLanguageChange={setCurrentLanguage}
+                  onAddToCabinet={handleAddToCabinet}
+                  isInCabinet={cabinet.some(c => c.ID === scanResult.medicineRecord?.ID)}
+                  onEscalateToPharmacist={() => queueForPharmacist(scanResult)}
+                  isEscalated={pharmacistQueue.some(q => q.medicineName === scanResult.medicineRecord?.Medicine)}
+                />
+              </div>
             )}
           </div>
         )}

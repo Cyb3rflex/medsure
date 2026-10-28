@@ -33,7 +33,7 @@ export interface InteractionRule {
 export interface SafetyCheckResult {
   isClean: boolean;
   flags: {
-    type: 'expired' | 'expiring_soon' | 'invalid_nafdac' | 'unregistered_nafdac' | 'not_in_dataset' | 'interaction' | 'prescription_warning' | 'allergy_warning';
+    type: 'expired' | 'expiring_soon' | 'invalid_nafdac' | 'unregistered_nafdac' | 'missing_expiry_photo' | 'not_in_dataset' | 'interaction' | 'prescription_warning' | 'allergy_warning';
     severity: 'red' | 'amber';
     title: string;
     message: string;
@@ -46,8 +46,21 @@ export interface SafetyCheckResult {
 export const MEDICINES: MedicineRecord[] = medicinesData as MedicineRecord[];
 export const INTERACTIONS: InteractionRule[] = interactionsData as InteractionRule[];
 
-// Official NAFDAC registration pattern: e.g. A4-0123, 04-1234, B4-5678, NR-01234
-export const NAFDAC_REGEX = /^([A-Z0-9]{2}-?[0-9]{4,6}|NR-?[0-9]{4,6})$/i;
+// Extract and normalize official Nigerian NAFDAC numbers (handles Reg No, prefix words, liquid/tablet suffixes)
+export function extractAndNormalizeNafdac(raw: string): { normalized: string; isValid: boolean } {
+  if (!raw || !raw.trim()) return { normalized: '', isValid: false };
+  // Find standard NAFDAC pattern anywhere in string: e.g. 04-1234, A4-5678, B4-1234L, NR-12345
+  const match = raw.match(/([A-Z0-9]{2}[-\s]?[0-9]{4,6}[A-Z]?|NRN?[-\s]?[0-9]{4,6}[A-Z]?)/i);
+  if (match) {
+    const cleaned = match[1].replace(/\s+/g, '-').toUpperCase();
+    return { normalized: cleaned, isValid: true };
+  }
+  const stripped = raw.replace(/nafdac|reg|no|registration|[:#.]/gi, '').replace(/\s+/g, '').trim();
+  const isValid = /^[A-Z0-9]{2}-?[0-9]{4,6}[A-Z]?$/i.test(stripped) || /^NRN?-?[0-9]{4,6}$/i.test(stripped);
+  return { normalized: stripped || raw, isValid };
+}
+
+export const NAFDAC_REGEX = /^([A-Z0-9]{2}-?[0-9]{4,6}[A-Z]?|NRN?-?[0-9]{4,6}[A-Z]?)$/i;
 
 // Match extracted name to dataset
 export function matchMedicine(extractedName: string): MedicineRecord | null {
@@ -219,17 +232,24 @@ export function evaluateSafety({
         }
       }
     }
+  } else if (isPhotoScan) {
+    flags.push({
+      type: 'missing_expiry_photo',
+      severity: 'amber',
+      title: 'Expiry Date Not Visible On Front Face',
+      message: 'The expiry date is typically embossed on the rear foil blister or stamped on the carton side flap. Add a back/flap photo or enter date manually to confirm freshness.'
+    });
   }
 
   // 3. NAFDAC Verification
   if (nafdacNumber && nafdacNumber.trim()) {
-    const cleanNafdac = nafdacNumber.trim().replace(/\s+/g, '');
-    if (!NAFDAC_REGEX.test(cleanNafdac)) {
+    const { isValid } = extractAndNormalizeNafdac(nafdacNumber);
+    if (!isValid) {
       flags.push({
         type: 'invalid_nafdac',
         severity: 'red',
         title: 'Suspect NAFDAC Number Format',
-        message: `The scanned number "${nafdacNumber}" does not match standard Nigerian NAFDAC registration formatting (e.g. 04-1234 or A4-5678). High counterfeit risk.`
+        message: `The scanned number "${nafdacNumber}" does not match standard Nigerian NAFDAC registration formatting (e.g. 04-1234, A4-5678, or B4-1234L). High counterfeit risk.`
       });
     }
   } else if (isPhotoScan) {

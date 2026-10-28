@@ -9,7 +9,7 @@ export const AFRICAN_MEDICAL_HUBS: GlobeMarker[] = [
   {
     lat: 7.4912,
     lng: 4.5426,
-    src: "https://assets.aceternity.com/avatars/1.webp",
+    src: "/testimonials/tunde-balogun.jpg",
     label: "Ile-Ife (OSCA Hacktoberfest 2026 Innovation Base)",
     city: "Ile-Ife, Osun",
     country: "Nigeria 🇳🇬",
@@ -20,7 +20,7 @@ export const AFRICAN_MEDICAL_HUBS: GlobeMarker[] = [
   {
     lat: 6.5244,
     lng: 3.3792,
-    src: "https://assets.aceternity.com/avatars/2.webp",
+    src: "/testimonials/amaka-okafor.jpg",
     label: "Lagos (Pediatric Acute Crisis & Emergency Caregiver Triage)",
     city: "Lagos",
     country: "Nigeria 🇳🇬",
@@ -31,7 +31,7 @@ export const AFRICAN_MEDICAL_HUBS: GlobeMarker[] = [
   {
     lat: 12.0022,
     lng: 8.592,
-    src: "https://assets.aceternity.com/avatars/3.webp",
+    src: "/testimonials/musa-ibrahim.jpg",
     label: "Ajala Town & Kano (Substandard Chemist Drug Filter)",
     city: "Kano & Ajala",
     country: "Nigeria 🇳🇬",
@@ -42,7 +42,7 @@ export const AFRICAN_MEDICAL_HUBS: GlobeMarker[] = [
   {
     lat: 4.8156,
     lng: 7.0498,
-    src: "https://assets.aceternity.com/avatars/4.webp",
+    src: "/testimonials/ngozi-eze.jpg",
     label: "Port Harcourt & Niger Delta (18,000+ Allergy Safeguard)",
     city: "Port Harcourt & Delta",
     country: "Nigeria 🇳🇬",
@@ -53,7 +53,7 @@ export const AFRICAN_MEDICAL_HUBS: GlobeMarker[] = [
   {
     lat: 7.2571,
     lng: 5.2058,
-    src: "https://assets.aceternity.com/avatars/5.webp",
+    src: "/testimonials/tunde-balogun.jpg",
     label: "Akure & Ondo State (Migraine Overdose Prevention)",
     city: "Akure, Ondo",
     country: "Nigeria 🇳🇬",
@@ -64,7 +64,7 @@ export const AFRICAN_MEDICAL_HUBS: GlobeMarker[] = [
   {
     lat: 9.0765,
     lng: 7.3986,
-    src: "https://assets.aceternity.com/avatars/6.webp",
+    src: "/icon.png",
     label: "Abuja (NAFDAC & Federal Ministry of Health Regulatory Alignment)",
     city: "Abuja (FCT)",
     country: "Nigeria 🇳🇬",
@@ -75,7 +75,7 @@ export const AFRICAN_MEDICAL_HUBS: GlobeMarker[] = [
   {
     lat: 6.4483,
     lng: 7.5139,
-    src: "https://assets.aceternity.com/avatars/7.webp",
+    src: "/testimonials/ngozi-eze.jpg",
     label: "Enugu (Southeastern Chronic Care & Igbo Audio Hub)",
     city: "Enugu",
     country: "Nigeria 🇳🇬",
@@ -86,7 +86,7 @@ export const AFRICAN_MEDICAL_HUBS: GlobeMarker[] = [
   {
     lat: 7.3775,
     lng: 3.947,
-    src: "https://assets.aceternity.com/avatars/8.webp",
+    src: "/testimonials/tunde-balogun.jpg",
     label: "Ibadan (UCH Clinical Pharmacy Drug Interaction Validation)",
     city: "Ibadan, Oyo",
     country: "Nigeria 🇳🇬",
@@ -99,7 +99,7 @@ export const AFRICAN_MEDICAL_HUBS: GlobeMarker[] = [
   {
     lat: 5.6037,
     lng: -0.187,
-    src: "https://assets.aceternity.com/avatars/9.webp",
+    src: "/testimonials/amaka-okafor.jpg",
     label: "Accra (West African Essential Drug Network)",
     city: "Accra",
     country: "Ghana 🇬🇭",
@@ -110,7 +110,7 @@ export const AFRICAN_MEDICAL_HUBS: GlobeMarker[] = [
   {
     lat: 14.7167,
     lng: -17.4677,
-    src: "https://assets.aceternity.com/avatars/10.webp",
+    src: "/testimonials/musa-ibrahim.jpg",
     label: "Dakar (Francophone West African Pharmacy Integration)",
     city: "Dakar",
     country: "Senegal 🇸🇳",
@@ -121,7 +121,7 @@ export const AFRICAN_MEDICAL_HUBS: GlobeMarker[] = [
   {
     lat: 5.36,
     lng: -4.0083,
-    src: "https://assets.aceternity.com/avatars/1.webp",
+    src: "/testimonials/tunde-balogun.jpg",
     label: "Abidjan (Gulf of Guinea Counterfeit Medicine Watch)",
     city: "Abidjan",
     country: "Côte d'Ivoire 🇨🇮",
@@ -134,7 +134,7 @@ export const AFRICAN_MEDICAL_HUBS: GlobeMarker[] = [
   {
     lat: -1.2921,
     lng: 36.8219,
-    src: "https://assets.aceternity.com/avatars/2.webp",
+    src: "/testimonials/ngozi-eze.jpg",
     label: "Nairobi (Community Chemist Mobile Verification)",
     city: "Nairobi",
     country: "Kenya 🇰🇪",
@@ -145,7 +145,7 @@ export const AFRICAN_MEDICAL_HUBS: GlobeMarker[] = [
   {
     lat: -1.9441,
     lng: 30.0619,
-    src: "https://assets.aceternity.com/avatars/3.webp",
+    src: "/icon.png",
     label: "Kigali (Digital Health & Medical Supply Chain Alignment)",
     city: "Kigali",
     country: "Rwanda 🇷🇼",
@@ -156,7 +156,7 @@ export const AFRICAN_MEDICAL_HUBS: GlobeMarker[] = [
   {
     lat: 0.3476,
     lng: 32.5825,
-    src: "https://assets.aceternity.com/avatars/4.webp",
+    src: "/testimonials/amaka-okafor.jpg",
     label: "Kampala (Great Lakes Infectious Disease Triage)",
     city: "Kampala",
     country: "Uganda 🇺🇬",
@@ -167,7 +167,7 @@ export const AFRICAN_MEDICAL_HUBS: GlobeMarker[] = [
   {
     lat: -6.7924,
     lng: 39.2083,
-    src: "https://assets.aceternity.com/avatars/5.webp",
+    src: "/testimonials/musa-ibrahim.jpg",
     label: "Dar es Salaam (Coastal Dispenser & Maternal Guidance)",
     city: "Dar es Salaam",
     country: "Tanzania 🇹🇿",
@@ -178,7 +178,7 @@ export const AFRICAN_MEDICAL_HUBS: GlobeMarker[] = [
   {
     lat: 9.032,
     lng: 38.7469,
-    src: "https://assets.aceternity.com/avatars/6.webp",
+    src: "/icon.png",
     label: "Addis Ababa (African Union CDC Governance Hub)",
     city: "Addis Ababa",
     country: "Ethiopia 🇪🇹",
@@ -191,7 +191,7 @@ export const AFRICAN_MEDICAL_HUBS: GlobeMarker[] = [
   {
     lat: 30.0444,
     lng: 31.2357,
-    src: "https://assets.aceternity.com/avatars/7.webp",
+    src: "/icon.png",
     label: "Cairo (North African Pharmacopoeia Standards)",
     city: "Cairo",
     country: "Egypt 🇪🇬",
@@ -202,7 +202,7 @@ export const AFRICAN_MEDICAL_HUBS: GlobeMarker[] = [
   {
     lat: -26.2041,
     lng: 28.0473,
-    src: "https://assets.aceternity.com/avatars/8.webp",
+    src: "/testimonials/tunde-balogun.jpg",
     label: "Johannesburg (Southern African Drug Interaction Matrix)",
     city: "Johannesburg",
     country: "South Africa 🇿🇦",
