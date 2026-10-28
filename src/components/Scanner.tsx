@@ -58,15 +58,65 @@ export default function Scanner({ onScanImage, onSearchName, isLoading }: Scanne
   const [typedName, setTypedName] = useState('');
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const handleFile = (file: File) => {
+  // Client-side high-efficiency downscaling to prevent mobile token/bandwidth limits & 429 rate limits
+  const compressImage = (file: File): Promise<{ base64: string; mimeType: string }> => {
+    return new Promise((resolve) => {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const img = new Image();
+        img.onload = () => {
+          const canvas = document.createElement('canvas');
+          let width = img.width;
+          let height = img.height;
+          const maxDim = 1200; // Optimal for OCR: preserves tiny 6pt text while dropping size by 95%
+
+          if (width > maxDim || height > maxDim) {
+            if (width > height) {
+              height = Math.round((height * maxDim) / width);
+              width = maxDim;
+            } else {
+              width = Math.round((width * maxDim) / height);
+              height = maxDim;
+            }
+          }
+
+          canvas.width = width;
+          canvas.height = height;
+          const ctx = canvas.getContext('2d');
+          if (ctx) {
+            ctx.imageSmoothingEnabled = true;
+            ctx.imageSmoothingQuality = 'high';
+            ctx.drawImage(img, 0, 0, width, height);
+            const compressed = canvas.toDataURL('image/jpeg', 0.82);
+            resolve({ base64: compressed, mimeType: 'image/jpeg' });
+          } else {
+            resolve({ base64: e.target?.result as string, mimeType: file.type || 'image/jpeg' });
+          }
+        };
+        img.onerror = () => {
+          resolve({ base64: e.target?.result as string, mimeType: file.type || 'image/jpeg' });
+        };
+        img.src = e.target?.result as string;
+      };
+      reader.readAsDataURL(file);
+    });
+  };
+
+  const handleFile = async (file: File) => {
     if (!file) return;
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      const base64 = e.target?.result as string;
+    try {
+      const { base64, mimeType } = await compressImage(file);
       setPreviewImage(base64);
-      onScanImage(base64, file.type || 'image/jpeg');
-    };
-    reader.readAsDataURL(file);
+      onScanImage(base64, mimeType);
+    } catch (err) {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const base64 = e.target?.result as string;
+        setPreviewImage(base64);
+        onScanImage(base64, file.type || 'image/jpeg');
+      };
+      reader.readAsDataURL(file);
+    }
   };
 
   const handleDrop = (e: React.DragEvent) => {

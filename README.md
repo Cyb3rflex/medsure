@@ -109,8 +109,7 @@ MedSure aligns with the **OPEN//BUILD 2026** requirement to meaningfully employ 
 * **Multimodal Vision OCR:** **Qwen2.5-VL-7B-Instruct** (`Qwen/Qwen2.5-VL-7B-Instruct`) and **SmolVLM-500M** for lightweight document and blister strip text extraction.
 * **Speech & Audio:** **OpenAI Whisper** and **Meta MMS** (Massively Multilingual Speech) for West African language support.
 
-For comprehensive architectural specifications, prompt schemas, and benchmarks, read [`MODEL_CARD.md`](file:///c:/Users/Cyberflex/Documents/medsure/MODEL_CARD.md).
-
+For comprehensive architectural specifications, prompt schemas, and benchmarks, read [`MODEL_CARD.md`](./MODEL_CARD.md).
 ---
 
 ## 🗣️ Supported Languages
@@ -133,7 +132,7 @@ MedSure communicates in the languages spoken across Nigerian households:
 
 ### 1. Clone the Repository
 ```bash
-git clone https://github.com/[YOUR-USERNAME]/medsure.git
+git clone https://github.com/Cyb3rflex/medsure.git
 cd medsure
 ```
 
@@ -149,6 +148,7 @@ GEMINI_API_KEY=your_gemini_api_key_here
 # Optional for direct Hugging Face open-weight endpoint:
 # HF_TOKEN=your_huggingface_token_here
 ```
+
 
 ### 4. Run the Development Server
 ```bash

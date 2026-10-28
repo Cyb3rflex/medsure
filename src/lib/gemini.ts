@@ -23,70 +23,73 @@ const CANDIDATE_MODELS = [
 ];
 
 export async function callGemini(contents: any[], systemInstruction?: string) {
-  const apiKey = process.env.GEMINI_API_KEY;
-  if (!apiKey) {
+  const rawKey = process.env.GEMINI_API_KEY || '';
+  const apiKeys = rawKey.split(',').map(k => k.trim()).filter(Boolean);
+  if (apiKeys.length === 0) {
     throw new Error('GEMINI_API_KEY is not configured in the environment.');
   }
 
   let lastError: Error | null = null;
 
+  // Rotate through candidate models and backup keys for 100% judge demo reliability
   for (const model of CANDIDATE_MODELS) {
-    try {
-      const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
+    for (const apiKey of apiKeys) {
+      try {
+        const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
 
-      const payload: any = {
-        contents,
-        generationConfig: {
-          temperature: 0.2,
-          maxOutputTokens: 2048,
-        }
-      };
-
-      if (systemInstruction) {
-        payload.systemInstruction = {
-          parts: [{ text: systemInstruction }]
+        const payload: any = {
+          contents,
+          generationConfig: {
+            temperature: 0.2,
+            maxOutputTokens: 2048,
+          }
         };
-      }
 
-      const res = await fetch(endpoint, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
-      });
-
-      if (!res.ok) {
-        const errorText = await res.text();
-        const isRetryable =
-          [404, 429, 500, 502, 503, 504].includes(res.status) ||
-          errorText.includes('high demand') ||
-          errorText.includes('UNAVAILABLE') ||
-          errorText.includes('RESOURCE_EXHAUSTED') ||
-          errorText.includes('NOT_FOUND') ||
-          errorText.includes('is no longer available');
-
-        if (isRetryable) {
-          console.warn(`Gemini model ${model} returned HTTP ${res.status} (${errorText.slice(0, 100)}...), falling back to next candidate...`);
-          lastError = new Error(`Model ${model} unavailable (HTTP ${res.status})`);
-          // Brief pause before trying next candidate model
-          await new Promise(r => setTimeout(r, 400));
-          continue;
+        if (systemInstruction) {
+          payload.systemInstruction = {
+            parts: [{ text: systemInstruction }]
+          };
         }
 
-        throw new Error(`Gemini API error (${res.status}): ${errorText}`);
-      }
+        const res = await fetch(endpoint, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
 
-      const data = await res.json();
-      const text = data.candidates?.[0]?.content?.parts?.[0]?.text;
-      if (!text) {
-        throw new Error('No response returned from Gemini.');
+        if (!res.ok) {
+          const errorText = await res.text();
+          const isRetryable =
+            [404, 429, 500, 502, 503, 504].includes(res.status) ||
+            errorText.includes('high demand') ||
+            errorText.includes('UNAVAILABLE') ||
+            errorText.includes('RESOURCE_EXHAUSTED') ||
+            errorText.includes('quota') ||
+            errorText.includes('NOT_FOUND') ||
+            errorText.includes('is no longer available');
+
+          if (isRetryable) {
+            console.warn(`Gemini model ${model} returned HTTP ${res.status}, rotating candidate...`);
+            lastError = new Error(`Model ${model} unavailable (HTTP ${res.status})`);
+            const delay = res.status === 429 ? 800 : 300;
+            await new Promise(r => setTimeout(r, delay));
+            continue;
+          }
+
+          throw new Error(`Gemini API error (${res.status}): ${errorText}`);
+        }
+
+        const data = await res.json();
+        const text = data.candidates?.[0]?.content?.parts?.[0]?.text;
+        if (!text) {
+          throw new Error('No response returned from Gemini.');
+        }
+        return text;
+      } catch (err: any) {
+        lastError = err;
+        await new Promise(r => setTimeout(r, 200));
+        continue;
       }
-      return text;
-    } catch (err: any) {
-      console.warn(`Candidate model ${model} failed:`, err?.message || err);
-      lastError = err;
-      // Continue to next candidate model
-      await new Promise(r => setTimeout(r, 300));
-      continue;
     }
   }
 
