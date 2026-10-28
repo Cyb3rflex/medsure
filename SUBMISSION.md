@@ -15,8 +15,8 @@
 
 | Member | Full Name | University | Role / Contribution |
 |---|---|---|---|
-| **Member 1 (Lead)** | *[Enter Full Name, e.g., Abdulqudus Abubakar]* | *[Enter University, e.g., Obafemi Awolowo University (OAU), Ile-Ife]* | Frontend Architecture, Voice Assistant, Clinical Safety Rule Engine, Design System |
-| **Member 2 (Co-Lead)** | *[Enter Teammate Full Name]* | *[Enter University, e.g., University of Ibadan / OAU]* | Open-Weight Model Pipeline, NAFDAC & Drug Dataset Curation, Pharmacist Portal & Testing |
+| **Member 1 (Lead)** | *Gospel Arinze* | *Lagos State University, Epe* | Product Analysis and Pitch-Lead |
+| **Member 2 (Co-Lead)** | *Abdulmuheez Quazeem* | *University of Ilorin, Ilorin* | Full-Stack Engineering, Voice Assistant, Clinical Safety Rule Engine, Design System, Open-Weight Model Pipeline, NAFDAC & Drug Dataset Curation |
 
 > *Note: Both team members are currently enrolled university students as required by OPEN//BUILD 2026 rules.*
 
@@ -71,8 +71,8 @@ Medical leaflets are written in dense, intimidating clinical jargon in Englishâ€
 
 ## 5. GitHub Repository & Live Deployment
 
-- **GitHub Repository:** `https://github.com/[YOUR-USERNAME]/medsure` *(Public, includes complete source code, tests, and reproduction scripts)*
-- **Live Demo Link:** `https://medsure.vercel.app` *(or custom Vercel / Netlify URL)*
+- **GitHub Repository:** `https://github.com/Cyb3rflex/medsure/` *(Public, includes complete source code, tests, and reproduction scripts)*
+- **Live Demo Link:** `https://medsure-five.vercel.app/`
 - **Demo Video:** `[YouTube / Loom link to 3-min walkthrough]`
 
 ---
