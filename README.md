@@ -4,6 +4,7 @@
 > **Theme:** *"AI belongs to everyone. Build for a world you understand. Make it open."*
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-emerald.svg)](LICENSE)
+[![Live Demo](https://img.shields.io/badge/Live%20Demo-medsure--five.vercel.app-emerald.svg)](https://medsure-five.vercel.app/)
 [![Next.js 14](https://img.shields.io/badge/Next.js-14.2-black.svg?logo=next.js)](https://nextjs.org/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.0-blue.svg?logo=typescript)](https://www.typescriptlang.org/)
 [![Tailwind CSS](https://img.shields.io/badge/Tailwind-3.4-38bdf8.svg?logo=tailwind-css)](https://tailwindcss.com/)

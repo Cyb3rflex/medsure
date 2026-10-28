@@ -71,9 +71,9 @@ Medical leaflets are written in dense, intimidating clinical jargon in Englishâ€
 
 ## 5. GitHub Repository & Live Deployment
 
-- **GitHub Repository:** `https://github.com/Cyb3rflex/medsure/` *(Public, includes complete source code, tests, and reproduction scripts)*
-- **Live Demo Link:** `https://medsure-five.vercel.app/`
-- **Demo Video:** `[YouTube / Loom link to 3-min walkthrough]`
+- **GitHub Repository:** `https://github.com/Cyb3rflex/medsure` *(Public, includes complete source code, tests, and reproduction scripts)*
+- **Live Demo Link:** `https://medsure-five.vercel.app`
+- **Demo Video:** `[YouTube / Loom link to 3-min walkthrough â€” Record using DEMO_PITCH_SCRIPT.md]`
 
 ---
 
