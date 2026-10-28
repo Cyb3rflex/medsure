@@ -19,6 +19,49 @@ const SPEED_PRESETS = [
   { label: '1.2x', value: 1.2, desc: 'Fast' },
 ];
 
+// Human-quality voice ranker that automatically selects modern neural/natural voices
+function findBestHumanVoice(
+  voices: SpeechSynthesisVoice[],
+  matcher?: (v: SpeechSynthesisVoice) => boolean
+): SpeechSynthesisVoice | null {
+  const candidates = matcher ? voices.filter(matcher) : voices;
+  if (candidates.length === 0) return null;
+
+  const scored = [...candidates].sort((a, b) => {
+    const score = (v: SpeechSynthesisVoice) => {
+      const name = v.name.toLowerCase();
+      let s = 0;
+      // Modern Neural / Natural human voices (Microsoft Edge, Google Chrome, Safari)
+      if (name.includes('natural')) s += 100;
+      if (name.includes('neural')) s += 95;
+      if (name.includes('online')) s += 85;
+      if (name.includes('google')) s += 75;
+      if (name.includes('enhanced') || name.includes('premium')) s += 65;
+      // Reassuring, clear female or compassionate tones
+      if (name.includes('jenny') || name.includes('sonia') || name.includes('aria') || name.includes('female')) s += 25;
+      if (!v.localService) s += 30; // Cloud neural voices are vastly superior to legacy local
+      // Strictly penalize and discard ancient robotic SAPI voices (Microsoft David Desktop, etc.)
+      if (name.includes('desktop') || name.includes('david') || name.includes('sapi')) s -= 150;
+      return s;
+    };
+    return score(b) - score(a);
+  });
+
+  return scored[0] || null;
+}
+
+// Formats text with natural human breathing pauses
+function formatHumanSpeech(raw: string): string {
+  if (!raw) return '';
+  return raw
+    .replace(/\. /g, '... ')
+    .replace(/Caution:/gi, '... Please note: ')
+    .replace(/Warning:/gi, '... Important safety alert: ')
+    .replace(/Ikilọ:/gi, '... Ikilọ pataki: ')
+    .replace(/Gargadi:/gi, '... Gargadi mai mahimmanci: ')
+    .replace(/Ịdọ aka ná ntị:/gi, '... Ịdọ aka ná ntị dị mkpa: ');
+}
+
 export default function VoicePlayer({
   textToRead,
   language,
@@ -74,74 +117,68 @@ export default function VoicePlayer({
     }
 
     const voices = availableVoices.length > 0 ? availableVoices : window.speechSynthesis.getVoices();
-    const utterance = new SpeechSynthesisUtterance(textToRead);
+    const humanFormattedText = formatHumanSpeech(textToRead);
+    const utterance = new SpeechSynthesisUtterance(humanFormattedText);
 
-    // 1. Detect native or compatible African dialect voice
+    // 1. Detect native or compatible African dialect voice using Neural ranker
     let matchedVoice: SpeechSynthesisVoice | null = null;
     let targetLangTag = 'en-US';
 
     if (language === 'pidgin') {
       matchedVoice =
-        voices.find(v => v.lang.includes('NG') || v.name.toLowerCase().includes('nigeria')) ||
-        voices.find(v => v.lang.includes('en-ZA')) ||
-        voices.find(v => v.lang.includes('en-GB')) ||
-        voices.find(v => v.lang.startsWith('en')) ||
-        null;
+        findBestHumanVoice(voices, v => v.lang.includes('NG') || v.name.toLowerCase().includes('nigeria')) ||
+        findBestHumanVoice(voices, v => v.lang.includes('en-ZA')) ||
+        findBestHumanVoice(voices, v => v.lang.includes('en-GB')) ||
+        findBestHumanVoice(voices, v => v.lang.startsWith('en'));
       targetLangTag = matchedVoice?.lang || 'en-NG';
-      utterance.pitch = 1.05;
+      utterance.pitch = 1.02; // Warm, natural West African tone
     } else if (language === 'yoruba') {
-      // Check for native Yoruba voice first
-      const nativeYo = voices.find(v => v.lang.toLowerCase().startsWith('yo'));
+      const nativeYo = findBestHumanVoice(voices, v => v.lang.toLowerCase().startsWith('yo'));
       if (nativeYo) {
         matchedVoice = nativeYo;
         targetLangTag = nativeYo.lang;
       } else {
-        // Fallback to Nigerian / African / Commonwealth voice with tonal calibration
         matchedVoice =
-          voices.find(v => v.lang.includes('NG') || v.name.toLowerCase().includes('nigeria')) ||
-          voices.find(v => v.lang.includes('en-ZA')) ||
-          voices.find(v => v.lang.includes('en-GB')) ||
-          voices.find(v => v.lang.startsWith('en')) ||
-          null;
+          findBestHumanVoice(voices, v => v.lang.includes('NG') || v.name.toLowerCase().includes('nigeria')) ||
+          findBestHumanVoice(voices, v => v.lang.includes('en-ZA')) ||
+          findBestHumanVoice(voices, v => v.lang.includes('en-GB')) ||
+          findBestHumanVoice(voices, v => v.lang.startsWith('en'));
         targetLangTag = matchedVoice?.lang || 'en-GB';
       }
-      utterance.pitch = 1.1; // Warm African vocal tone
+      utterance.pitch = 1.04;
     } else if (language === 'hausa') {
-      const nativeHa = voices.find(v => v.lang.toLowerCase().startsWith('ha'));
+      const nativeHa = findBestHumanVoice(voices, v => v.lang.toLowerCase().startsWith('ha'));
       if (nativeHa) {
         matchedVoice = nativeHa;
         targetLangTag = nativeHa.lang;
       } else {
         matchedVoice =
-          voices.find(v => v.lang.includes('NG') || v.name.toLowerCase().includes('nigeria')) ||
-          voices.find(v => v.lang.includes('en-ZA')) ||
-          voices.find(v => v.lang.includes('en-GB')) ||
-          voices.find(v => v.lang.startsWith('en')) ||
-          null;
+          findBestHumanVoice(voices, v => v.lang.includes('NG') || v.name.toLowerCase().includes('nigeria')) ||
+          findBestHumanVoice(voices, v => v.lang.includes('en-ZA')) ||
+          findBestHumanVoice(voices, v => v.lang.includes('en-GB')) ||
+          findBestHumanVoice(voices, v => v.lang.startsWith('en'));
         targetLangTag = matchedVoice?.lang || 'en-GB';
       }
-      utterance.pitch = 1.03;
+      utterance.pitch = 1.0;
     } else if (language === 'igbo') {
-      const nativeIg = voices.find(v => v.lang.toLowerCase().startsWith('ig'));
+      const nativeIg = findBestHumanVoice(voices, v => v.lang.toLowerCase().startsWith('ig'));
       if (nativeIg) {
         matchedVoice = nativeIg;
         targetLangTag = nativeIg.lang;
       } else {
         matchedVoice =
-          voices.find(v => v.lang.includes('NG') || v.name.toLowerCase().includes('nigeria')) ||
-          voices.find(v => v.lang.includes('en-ZA')) ||
-          voices.find(v => v.lang.includes('en-GB')) ||
-          voices.find(v => v.lang.startsWith('en')) ||
-          null;
+          findBestHumanVoice(voices, v => v.lang.includes('NG') || v.name.toLowerCase().includes('nigeria')) ||
+          findBestHumanVoice(voices, v => v.lang.includes('en-ZA')) ||
+          findBestHumanVoice(voices, v => v.lang.includes('en-GB')) ||
+          findBestHumanVoice(voices, v => v.lang.startsWith('en'));
         targetLangTag = matchedVoice?.lang || 'en-GB';
       }
-      utterance.pitch = 1.08;
+      utterance.pitch = 1.03;
     } else {
       matchedVoice =
-        voices.find(v => v.lang.includes('en-GB')) ||
-        voices.find(v => v.lang.includes('en-US')) ||
-        voices.find(v => v.lang.startsWith('en')) ||
-        null;
+        findBestHumanVoice(voices, v => v.lang.includes('en-GB')) ||
+        findBestHumanVoice(voices, v => v.lang.includes('en-US')) ||
+        findBestHumanVoice(voices, v => v.lang.startsWith('en'));
       targetLangTag = matchedVoice?.lang || 'en-US';
       utterance.pitch = 1.0;
     }
