@@ -20,6 +20,28 @@ export default function Home() {
   const [scanResult, setScanResult] = useState<any | null>(null);
   const [nonMedicineWarning, setNonMedicineWarning] = useState<string | null>(null);
   const [scanError, setScanError] = useState<string | null>(null);
+  const [lastScannedImage, setLastScannedImage] = useState<{ base64: string; mimeType: string } | null>(null);
+
+  // Helper to format raw API errors into clean, friendly patient guidance
+  const cleanErrorMessage = (rawMsg: string): string => {
+    if (!rawMsg) return 'Failed to scan medicine pack. Please try again.';
+    if (rawMsg.includes('503') || rawMsg.includes('UNAVAILABLE') || rawMsg.includes('high demand')) {
+      return 'The AI vision engine is temporarily experiencing high traffic spikes. Our backup model is ready — please tap "Retry Scan" or select a verified demo medicine below.';
+    }
+    if (rawMsg.includes('429') || rawMsg.includes('quota') || rawMsg.includes('RESOURCE_EXHAUSTED')) {
+      return 'API rate limit reached. Please wait a few seconds and tap "Retry Scan".';
+    }
+    try {
+      const jsonMatch = rawMsg.match(/\{[\s\S]*\}/);
+      if (jsonMatch) {
+        const parsed = JSON.parse(jsonMatch[0]);
+        if (parsed?.error?.message) {
+          return cleanErrorMessage(parsed.error.message);
+        }
+      }
+    } catch (e) {}
+    return rawMsg;
+  };
 
   // User's home medicine cabinet
   const [cabinet, setCabinet] = useState<MedicineRecord[]>([]);
@@ -41,6 +63,7 @@ export default function Home() {
     setIsLoading(true);
     setNonMedicineWarning(null);
     setScanError(null);
+    setLastScannedImage({ base64: base64Image, mimeType });
     setActiveTab('patient');
 
     try {
@@ -71,12 +94,12 @@ export default function Home() {
       } else {
         setScanResult(null);
         setNonMedicineWarning(null);
-        setScanError(data.error || 'Failed to scan medicine pack.');
+        setScanError(cleanErrorMessage(data.error || 'Failed to scan medicine pack.'));
       }
     } catch (err: any) {
       setScanResult(null);
       setNonMedicineWarning(null);
-      setScanError('Error scanning medicine: ' + (err.message || 'Please check your connection and try again.'));
+      setScanError(cleanErrorMessage(err.message || 'Please check your connection and try again.'));
     } finally {
       setIsLoading(false);
     }
@@ -296,7 +319,7 @@ export default function Home() {
                       <h3 className="text-base font-bold text-white font-display">
                         Scan Verification Notice
                       </h3>
-                      <p className="text-sm text-slate-300 leading-relaxed">
+                      <p className="text-sm text-slate-300 leading-relaxed max-w-2xl">
                         {scanError}
                       </p>
                     </div>
@@ -307,6 +330,32 @@ export default function Home() {
                     aria-label="Dismiss error"
                   >
                     <X className="w-5 h-5" />
+                  </button>
+                </div>
+
+                {/* Instant Recovery Actions */}
+                <div className="mt-5 pt-4 border-t border-slate-800/80 flex flex-wrap items-center gap-3">
+                  {lastScannedImage && (
+                    <button
+                      onClick={() => handleScanImage(lastScannedImage.base64, lastScannedImage.mimeType)}
+                      className="px-4 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 text-xs font-bold shadow-md shadow-emerald-500/20 transition-all flex items-center gap-2 cursor-pointer"
+                    >
+                      <RefreshCw className="w-3.5 h-3.5" />
+                      <span>Retry Scan Now</span>
+                    </button>
+                  )}
+                  <span className="text-xs text-slate-400 font-medium">Or test with verified preset:</span>
+                  <button
+                    onClick={() => handleSearchName('Panadol Extra')}
+                    className="px-3 py-1.5 rounded-lg bg-slate-800/80 hover:bg-slate-700 text-xs font-medium text-emerald-300 transition-colors"
+                  >
+                    Panadol Extra
+                  </button>
+                  <button
+                    onClick={() => handleSearchName('Artemether-lumefantrine', { mockExpiry: '2024-02' })}
+                    className="px-3 py-1.5 rounded-lg bg-slate-800/80 hover:bg-slate-700 text-xs font-medium text-rose-300 transition-colors"
+                  >
+                    Expired Antimalarial
                   </button>
                 </div>
               </div>

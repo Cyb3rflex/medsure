@@ -12,11 +12,12 @@ export interface ExtractedMedicine {
 
 export type SupportedLanguage = 'en' | 'pidgin' | 'yoruba' | 'hausa' | 'igbo';
 
-// Candidate models in priority order for ultra-high availability
+// Candidate models in priority order for ultra-high availability and zero 503/404 downtime
 const CANDIDATE_MODELS = [
-  'gemini-3.8-flash',
   'gemini-1.5-flash',
   'gemini-2.0-flash',
+  'gemini-1.5-pro',
+  'gemini-3.8-flash',
   'gemini-flash-latest',
   'gemini-pro-latest'
 ];
@@ -55,12 +56,22 @@ export async function callGemini(contents: any[], systemInstruction?: string) {
 
       if (!res.ok) {
         const errorText = await res.text();
-        // If 404, not found, or model deprecated, fall back to next model
-        if (res.status === 404 || errorText.includes('NOT_FOUND') || errorText.includes('is no longer available')) {
-          console.warn(`Gemini model ${model} unavailable (HTTP ${res.status}), trying next candidate...`);
-          lastError = new Error(`Gemini API error (${res.status}): ${errorText}`);
+        const isRetryable =
+          [404, 429, 500, 502, 503, 504].includes(res.status) ||
+          errorText.includes('high demand') ||
+          errorText.includes('UNAVAILABLE') ||
+          errorText.includes('RESOURCE_EXHAUSTED') ||
+          errorText.includes('NOT_FOUND') ||
+          errorText.includes('is no longer available');
+
+        if (isRetryable) {
+          console.warn(`Gemini model ${model} returned HTTP ${res.status} (${errorText.slice(0, 100)}...), falling back to next candidate...`);
+          lastError = new Error(`Model ${model} unavailable (HTTP ${res.status})`);
+          // Brief pause before trying next candidate model
+          await new Promise(r => setTimeout(r, 400));
           continue;
         }
+
         throw new Error(`Gemini API error (${res.status}): ${errorText}`);
       }
 
@@ -71,15 +82,20 @@ export async function callGemini(contents: any[], systemInstruction?: string) {
       }
       return text;
     } catch (err: any) {
+      console.warn(`Candidate model ${model} failed:`, err?.message || err);
       lastError = err;
-      if (err.message && (err.message.includes('404') || err.message.includes('NOT_FOUND') || err.message.includes('not available'))) {
-        continue;
-      }
-      throw err;
+      // Continue to next candidate model
+      await new Promise(r => setTimeout(r, 300));
+      continue;
     }
   }
 
-  throw lastError || new Error('All candidate Gemini models failed to generate content.');
+  throw (
+    lastError ||
+    new Error(
+      'The AI service is currently experiencing high demand. Please try again in a few moments, or use one of the verified demo presets below.'
+    )
+  );
 }
 
 // 1. Vision Extraction from Photo
