@@ -75,7 +75,7 @@
    * Change language to **Nigerian Pidgin** or **Yorùbá**.
    * Click **Play Voice Note**.
    * Show the animated sound wave and adjust the speed to **0.8x** (explaining this is for elderly relatives and low-literacy users).
-4. **Interactive Coursera-Style Question Chips (`FollowUpQuestions.tsx`):**
+4. **Interactive Patient Question Chips (`FollowUpQuestions.tsx`):**
    * Click the chip: *"Can I take this medicine with food or on an empty stomach?"*
    * Show the instant clinical response and point out the mandatory section: *"🩺 What to verify with your Pharmacist"*.
 

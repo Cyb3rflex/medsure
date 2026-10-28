@@ -85,8 +85,8 @@ This gives the project a **compelling emotional hook and bulletproof technical g
   * If it contains a **Sulfa / Sulfonamide** (e.g., Co-trimoxazole / Septrin, Fansidar/SP), it flags:  
     *`⚠️ SULFA ALLERGY ALERT: High risk for individuals with G6PD deficiency or sulfa hypersensitivity.`*
 
-#### 4. Coursera-Style Interactive Follow-Up Questions (`FollowUpQuestions.tsx`)
-* Modeled directly after educational question prompts:
+#### 4. Interactive Patient Follow-Up Questions (`FollowUpQuestions.tsx`)
+* Modeled directly after patient safety question prompts:
   * Generates 3 intelligent, contextual question chips:
     * *"Can I take this medicine with food or on an empty stomach?"*
     * *"What if the patient has high blood pressure or asthma?"*

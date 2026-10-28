@@ -63,7 +63,7 @@ MedSure is an open-source, mobile-first digital health guardian designed specifi
 | 🛡️ **Zero-Hallucination Safety** | Pure code handles expiry math, NAFDAC pattern validation, and allergy badges. AI never invents dosages. |
 | 🧪 **Mechanism of Action Cards** | Breaks down chemical names into everyday language (e.g. how Salbutamol widens narrowed airways). |
 | ⚠️ **Allergy Class Badges** | Instant visual warning badges for NSAIDs (Ibuprofen, Diclofenac) and Sulfas (Septrin, Fansidar). |
-| 🎓 **Coursera-Style Follow-Up Q&A** | Contextual question chips (e.g. *"Can I take this with food?"*) with mandatory pharmacist referral advice. |
+| 💡 **Patient Follow-Up Q&A** | Contextual question chips (e.g. *"Can I take this with food?"*) with mandatory pharmacist referral advice. |
 | 💊 **My Medicine Cabinet** | Matrix-based cross-drug clash detection across all stored home medications. |
 | 🗣️ **Multilingual Audio Player** | Voice synthesis in 5 local languages with 0.8x / 0.9x / 1.0x playback speed controls for elderly users. |
 | 👨‍⚕️ **Pharmacist Portal** | Dedicated clinical queue for licensed pharmacists to audit flagged medications. |
@@ -96,7 +96,7 @@ In healthcare, **AI hallucination can be fatal**. MedSure solves this by strictl
  ❌ Halts dosage advice                 ✅ Tier 2: Open-Weight AI
  🚨 Shows warning badges                📝 Generates plain explanation
  📋 Routes to Pharmacist Queue          🎙️ Generates audio voice note
-                                        🎓 Generates Coursera-style Q&A
+                                        💡 Generates follow-up Q&A
 ```
 
 ---
@@ -175,7 +175,7 @@ medsure/
 │   ├── app/
 │   │   ├── api/
 │   │   │   ├── explain/route.ts    # Multilingual explanation endpoint
-│   │   │   ├── follow-up/route.ts  # Coursera-style Q&A endpoint
+│   │   │   ├── follow-up/route.ts  # Patient Q&A endpoint
 │   │   │   └── scan/route.ts       # Multimodal OCR vision endpoint
 │   │   ├── globals.css         # Glassmorphism & dark healthcare theme
 │   │   ├── layout.tsx          # Root layout & Plus Jakarta Sans typography

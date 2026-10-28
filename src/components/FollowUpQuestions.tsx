@@ -65,10 +65,10 @@ export default function FollowUpQuestions({
         </div>
         <div>
           <h4 className="text-xs font-bold text-white font-display uppercase tracking-wider">
-            Ask More Questions (Coursera-Style Interactive Learning)
+            Have Questions About This Medicine?
           </h4>
           <p className="text-[11px] text-slate-400">
-            Click a suggested question below or type what you need clarified about this medicine:
+            Click a suggested question below or type what you need clarified:
           </p>
         </div>
       </div>

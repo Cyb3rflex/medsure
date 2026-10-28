@@ -193,7 +193,7 @@ CRITICAL MEDICAL RULES:
    - Mention key allergies (like NSAID allergy, Sulfa allergy, Aspirin sensitivity) if relevant to this drug class.
 4. If there are RED FLAGS (e.g. Expired, invalid NAFDAC, dangerous drug-drug interaction):
    - Firmly advise NOT to consume the medicine and to see a licensed pharmacist immediately.
-5. Provide 3 thoughtful COURSERA-STYLE follow-up questions the patient can click to learn more.
+5. Provide 3 thoughtful patient follow-up questions the patient can click to learn more.
 
 Output strictly formatted JSON:
 {
@@ -248,7 +248,7 @@ Allergens: ${safetyResult.allergensDetected?.join(', ') || 'None identified'}
   }
 }
 
-// 3. Coursera-Style Interactive Follow-Up Questions & Symptom Clarifier
+// 3. Interactive Patient Follow-Up Questions & Symptom Clarifier
 export async function answerFollowUpQuestion({
   medicine,
   question,

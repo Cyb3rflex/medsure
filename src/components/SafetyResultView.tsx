@@ -357,7 +357,7 @@ export default function SafetyResultView({
         </div>
       </div>
 
-      {/* 4. Coursera-Style Follow-Up Questions */}
+      {/* 4. Patient Follow-Up Questions */}
       <FollowUpQuestions
         medicine={medicineRecord}
         suggestedQuestions={activeExplanation?.suggested_questions || []}

@@ -24,7 +24,7 @@ MedSure is architected as a high-performance, mobile-first Web Application built
 |                         Next.js Server API Routes                           |
 |  - POST /api/scan (Image decoding, multimodal OCR, structured JSON parse)   |
 |  - POST /api/explain (Multilingual reasoning, mechanism breakdown)          |
-|  - POST /api/follow-up (Interactive Coursera-style educational Q&A)         |
+|  - POST /api/follow-up (Interactive patient educational Q&A)                 |
 +─────────────────────────────────────────────────────────────────────────────+
             │                                             │
             ▼                                             ▼
@@ -64,9 +64,9 @@ MedSure is architected as a high-performance, mobile-first Web Application built
   - For audio generation, we leverage the client browser's Web Speech API with adjustable rate controls (`0.8x`, `0.9x`, `1.0x`) for elderly comprehension, with server-side text phoneticization for Yoruba and Igbo tone marks.
   - This eliminates audio streaming latency and server hosting costs while providing immediate accessibility.
 
-### Decision 4: Interactive Coursera-Style Educational Chips
+### Decision 4: Interactive Patient Follow-Up Question Chips
 * **Context:** When patients receive a safety report, they rarely know what critical follow-up questions to ask their doctor or pharmacist.
-* **Decision:** Inspired by Coursera's learning reinforcement prompts, MedSure automatically suggests 3 context-aware question chips for each medicine (e.g., *"Can I take this with food?"*, *"What if the patient has asthma?"*, *"What are safer alternatives if allergic to NSAIDs?"*).
+* **Decision:** MedSure automatically suggests 3 context-aware question chips for each medicine (e.g., *"Can I take this with food?"*, *"What if the patient has asthma?"*, *"What are safer alternatives if allergic to NSAIDs?"*).
 * **Implementation:** Clicking any chip immediately triggers a contextual clinical response with a mandatory bullet point on what to verify with a licensed pharmacist.
 
 ---

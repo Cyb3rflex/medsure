@@ -67,7 +67,7 @@
 * **Curated Nigerian Datasets:**
   * 43 Nigerian Essential Medicines vetted from WHO/FMOH lists.
   * 14 Critical Drug-Drug Interaction Rules (e.g. duplicate NSAID toxicity).
-* **Interactive Educational Chips:** Coursera-style follow-up questions with mandatory pharmacist referral guidance.
+* **Interactive Educational Chips:** Context-aware follow-up questions with mandatory pharmacist referral guidance.
 
 ---
 
