@@ -204,7 +204,7 @@ export default function Home() {
 
       {/* Main Clinical Dashboard Tabs */}
       {activeTab !== 'story' && (
-        <main className="flex-1 max-w-6xl w-full mx-auto p-4 sm:p-6 lg:p-8 pt-24 sm:pt-28 space-y-6">
+        <main className="flex-1 max-w-6xl w-full mx-auto p-4 sm:p-6 lg:p-8 pt-32 sm:pt-36 lg:pt-40 space-y-6">
           {/* Real-Life Emergency Banner (Addressing Home Panic & Respiratory Attacks) */}
           <EmergencyBanner
             currentLanguage={currentLanguage}
