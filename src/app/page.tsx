@@ -316,6 +316,7 @@ export default function Home() {
               <SafetyResultView
                 scanData={scanResult}
                 currentLanguage={currentLanguage}
+                onLanguageChange={setCurrentLanguage}
                 onAddToCabinet={handleAddToCabinet}
                 isInCabinet={cabinet.some(c => c.ID === scanResult.medicineRecord?.ID)}
                 onEscalateToPharmacist={() => queueForPharmacist(scanResult)}

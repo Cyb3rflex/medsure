@@ -19,6 +19,7 @@ import {
 import VoicePlayer from './VoicePlayer';
 import FollowUpQuestions from './FollowUpQuestions';
 import { SupportedLanguage } from '@/lib/gemini';
+import { buildSpokenExplanation } from '@/lib/translations';
 import confetti from 'canvas-confetti';
 
 interface SafetyResultViewProps {
@@ -28,6 +29,7 @@ interface SafetyResultViewProps {
   isInCabinet: boolean;
   onEscalateToPharmacist: (data: any) => void;
   isEscalated: boolean;
+  onLanguageChange?: (lang: SupportedLanguage) => void;
 }
 
 export default function SafetyResultView({
@@ -36,9 +38,61 @@ export default function SafetyResultView({
   onAddToCabinet,
   isInCabinet,
   onEscalateToPharmacist,
-  isEscalated
+  isEscalated,
+  onLanguageChange
 }: SafetyResultViewProps) {
   const { extractedData, safetyResult, medicineRecord, explanation } = scanData;
+
+  const [translatedExplanations, setTranslatedExplanations] = React.useState<Record<string, any>>({});
+  const [isTranslating, setIsTranslating] = React.useState(false);
+
+  // Dynamically fetch AI translation if user switches language and it's not yet cached
+  React.useEffect(() => {
+    if (currentLanguage === 'en' || !medicineRecord) return;
+    if (translatedExplanations[currentLanguage]) return;
+
+    let isMounted = true;
+    setIsTranslating(true);
+
+    fetch('/api/translate', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        medicine: medicineRecord,
+        safetyResult,
+        language: currentLanguage
+      })
+    })
+      .then(res => res.json())
+      .then(data => {
+        if (isMounted && data.success && data.explanation) {
+          setTranslatedExplanations(prev => ({
+            ...prev,
+            [currentLanguage]: data.explanation
+          }));
+        }
+      })
+      .catch(err => {
+        console.warn('Dynamic translation failed:', err);
+      })
+      .finally(() => {
+        if (isMounted) setIsTranslating(false);
+      });
+
+    return () => { isMounted = false; };
+  }, [currentLanguage, medicineRecord?.ID]);
+
+  const activeExplanation =
+    (currentLanguage !== 'en' && translatedExplanations[currentLanguage])
+      ? translatedExplanations[currentLanguage]
+      : explanation;
+
+  const spokenText = buildSpokenExplanation({
+    medicine: medicineRecord,
+    safetyResult,
+    explanation: activeExplanation,
+    language: currentLanguage
+  });
 
   const triggerConfetti = () => {
     confetti({
@@ -233,38 +287,47 @@ export default function SafetyResultView({
           </div>
 
           <VoicePlayer
-            textToRead={`${explanation?.summary || medicineRecord.Uses}. Caution: ${explanation?.allergy_and_cautions || medicineRecord['Key warnings']}`}
+            textToRead={spokenText}
             language={currentLanguage}
+            onLanguageChange={onLanguageChange}
+            medicineName={medicineRecord.Medicine}
           />
         </div>
       </div>
 
       {/* 3. Plain-Language Active Ingredient Mechanism & Panic Breakdown */}
       <div className="glass-panel p-6 rounded-3xl border border-slate-800 space-y-4">
-        <div className="flex items-center gap-2.5">
-          <div className="w-8 h-8 rounded-xl bg-emerald-500/20 border border-emerald-500/30 flex items-center justify-center">
-            <Sparkles className="w-4 h-4 text-emerald-400" />
+        <div className="flex items-center justify-between flex-wrap gap-2">
+          <div className="flex items-center gap-2.5">
+            <div className="w-8 h-8 rounded-xl bg-emerald-500/20 border border-emerald-500/30 flex items-center justify-center">
+              <Sparkles className="w-4 h-4 text-emerald-400" />
+            </div>
+            <div>
+              <h3 className="text-sm font-bold text-white font-display uppercase tracking-wider">
+                How the Active Ingredients Work &amp; What They Do
+              </h3>
+              <p className="text-xs text-slate-400">Plain-language medical breakdown to prevent confusion and panic</p>
+            </div>
           </div>
-          <div>
-            <h3 className="text-sm font-bold text-white font-display uppercase tracking-wider">
-              How the Active Ingredients Work &amp; What They Do
-            </h3>
-            <p className="text-xs text-slate-400">Plain-language medical breakdown to prevent confusion and panic</p>
-          </div>
+          {isTranslating && (
+            <span className="text-[11px] font-semibold text-emerald-400 bg-emerald-950/60 border border-emerald-500/30 px-2.5 py-1 rounded-full animate-pulse">
+              Translating to {currentLanguage.toUpperCase()}...
+            </span>
+          )}
         </div>
 
         {/* Core summary */}
         <div className="p-4 rounded-2xl bg-slate-900/90 border border-slate-800 text-slate-200 text-xs leading-relaxed">
           <p className="font-semibold text-white mb-1">What this medicine does:</p>
-          <p>{explanation?.what_it_does || medicineRecord.Uses}</p>
+          <p>{activeExplanation?.what_it_does || medicineRecord.Uses}</p>
         </div>
 
         {/* Ingredient by Ingredient Component Cards */}
-        {explanation?.how_it_works_components?.length > 0 && (
+        {activeExplanation?.how_it_works_components?.length > 0 && (
           <div className="space-y-3 pt-2">
             <h4 className="text-xs font-bold text-slate-300 uppercase tracking-wider">Active Chemical Components:</h4>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-              {explanation.how_it_works_components.map((comp: any, idx: number) => (
+              {activeExplanation.how_it_works_components.map((comp: any, idx: number) => (
                 <div key={idx} className="p-4 rounded-2xl bg-slate-900/80 border border-slate-800 hover:border-emerald-500/30 transition-all space-y-2">
                   <div className="flex items-center justify-between">
                     <span className="text-xs font-bold text-emerald-300 font-mono">{comp.component}</span>
@@ -289,7 +352,7 @@ export default function SafetyResultView({
             <span>Important Allergies &amp; Precautions</span>
           </span>
           <p className="text-slate-300 leading-relaxed">
-            {explanation?.allergy_and_cautions || medicineRecord['Key warnings']}
+            {activeExplanation?.allergy_and_cautions || medicineRecord['Key warnings']}
           </p>
         </div>
       </div>
@@ -297,7 +360,7 @@ export default function SafetyResultView({
       {/* 4. Coursera-Style Follow-Up Questions */}
       <FollowUpQuestions
         medicine={medicineRecord}
-        suggestedQuestions={explanation?.suggested_questions || []}
+        suggestedQuestions={activeExplanation?.suggested_questions || []}
         currentLanguage={currentLanguage}
       />
     </div>
