@@ -46,8 +46,68 @@ export default function Home() {
   // User's home medicine cabinet
   const [cabinet, setCabinet] = useState<MedicineRecord[]>([]);
 
-  // Pharmacist review queue
-  const [pharmacistQueue, setPharmacistQueue] = useState<PharmacistReviewItem[]>([]);
+  // Pharmacist review queue seeded with realistic clinical cases for instant demo interactivity
+  const [pharmacistQueue, setPharmacistQueue] = useState<PharmacistReviewItem[]>([
+    {
+      id: 'RX-VOICE-8412',
+      timestamp: '10:42 AM',
+      caseType: 'voice_complaint',
+      medicineName: 'Voice Consultation (Pediatric High Fever & Vomiting)',
+      patientComplaint: 'My 3-year-old baby girl has hot fever for 2 days, she is vomiting and refusing breast milk. Should I give her half of adult Coartem tablet?',
+      triageLevel: 'Urgent Referral Required',
+      patientName: 'Mrs. Fatima Aliyu',
+      patientPhone: '+234 803 456 7890',
+      patientLocation: 'Ikeja, Lagos State (Mobile Voice Session)',
+      immediateActions: [
+        'DO NOT administer split adult antimalarial or NSAID tablets to toddlers',
+        'Tepid sponge the child with room-temperature water (avoid cold or ice water)',
+        'Administer pediatric paracetamol syrup strictly by weight if available and proceed for rapid malaria RDT test'
+      ],
+      extractedData: {
+        triage_title: 'Pediatric Acute Febrile Illness',
+        detected_medicines: ['Adult Coartem Tablet (Contraindicated for Split Ingestion)']
+      },
+      flags: [
+        {
+          title: 'Pediatric Dose Splitting Risk',
+          message: 'Splitting adult fixed-dose artemisinin tablets can cause acute under-dosing or severe hepatic toxicity in a 3-year-old child.'
+        },
+        {
+          title: 'Dehydration & Lethargy Risk',
+          message: 'Vomiting and refusal of feeds indicates potential high-risk pediatric dehydration.'
+        }
+      ],
+      status: 'pending'
+    },
+    {
+      id: 'RX-7290',
+      timestamp: '09:15 AM',
+      caseType: 'flagged_drug',
+      medicineName: 'Amoxicillin Trihydrate 500mg (Hard Gelatin Capsules)',
+      patientName: 'Mr. Emeka Nwosu',
+      patientPhone: '+234 812 984 3310',
+      patientLocation: 'Garki, Abuja (OTC Community Pharmacy Desk)',
+      extractedData: {
+        medicine_name: 'Amoxicillin Trihydrate',
+        strength: '500mg',
+        dosage_form: 'Hard Gelatin Capsule',
+        nafdac_number: 'Unverified / Missing on Front Face',
+        batch_number: 'AMX-2023-B9',
+        expiry_date: '10/2023 (EXPIRED)'
+      },
+      flags: [
+        {
+          title: 'Expired Medication Warning',
+          message: 'Batch expiry date 10/2023 has elapsed. Degraded amoxicillin loses therapeutic antimicrobial efficacy and poses hypersensitivity risks.'
+        },
+        {
+          title: 'Missing NAFDAC Registration',
+          message: 'No official NAFDAC registration number detected on blister foil.'
+        }
+      ],
+      status: 'pending'
+    }
+  ]);
 
   // Initialize with sample cabinet items for instant hackathon demo interaction
   useEffect(() => {
@@ -177,14 +237,23 @@ export default function Home() {
       medicineName: complaintData.detectedMedicines?.[0] ? `Voice Consultation (${complaintData.detectedMedicines.join(', ')})` : 'Patient Voice Complaint',
       patientComplaint: complaintData.situation,
       triageLevel: complaintData.triageLevel,
+      patientName: 'Mrs. Fatima Aliyu',
+      patientPhone: '+234 803 456 7890',
+      patientLocation: 'Ikeja, Lagos State (Mobile App Session)',
       immediateActions: complaintData.immediateActions,
       extractedData: {
         triage_title: complaintData.urgencyTitle,
         detected_medicines: complaintData.detectedMedicines
       },
       flags: [
-        `Urgency: ${complaintData.urgencyTitle}`,
-        ...(complaintData.immediateActions || [])
+        {
+          title: `Urgency: ${complaintData.urgencyTitle}`,
+          message: 'Clinical assessment recommended prior to administering any active pharmaceutical compounds.'
+        },
+        ...(complaintData.immediateActions || []).map(act => ({
+          title: 'Guided Action',
+          message: act
+        }))
       ],
       status: 'pending'
     };
@@ -199,6 +268,9 @@ export default function Home() {
       id: 'RX-' + Math.floor(1000 + Math.random() * 9000),
       timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
       medicineName: data.medicineRecord?.Medicine || data.extractedData?.medicine_name || 'Flagged Medicine',
+      patientName: 'Mr. Emeka Nwosu',
+      patientPhone: '+234 812 984 3310',
+      patientLocation: 'Garki, Abuja (OTC Counter Blister Pack)',
       extractedData: data.extractedData,
       flags: data.safetyResult?.flags || [],
       status: 'pending'
@@ -221,13 +293,27 @@ export default function Home() {
   // 5. Pharmacist actions
   const handleApprove = (id: string, notes: string) => {
     setPharmacistQueue(prev =>
-      prev.map(q => q.id === id ? { ...q, status: 'approved', pharmacistNotes: notes, reviewedAt: new Date().toLocaleTimeString() } : q)
+      prev.map(q => q.id === id ? { 
+        ...q, 
+        status: 'approved', 
+        pharmacistNotes: notes, 
+        reviewedAt: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+        pharmacistName: 'Pharm. Dr. Musa Ibrahim, B.Pharm, MPSN',
+        pcnLicense: 'PCN Reg #049281'
+      } : q)
     );
   };
 
   const handleReject = (id: string, notes: string) => {
     setPharmacistQueue(prev =>
-      prev.map(q => q.id === id ? { ...q, status: 'rejected', pharmacistNotes: notes, reviewedAt: new Date().toLocaleTimeString() } : q)
+      prev.map(q => q.id === id ? { 
+        ...q, 
+        status: 'rejected', 
+        pharmacistNotes: notes, 
+        reviewedAt: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+        pharmacistName: 'Pharm. Dr. Musa Ibrahim, B.Pharm, MPSN',
+        pcnLicense: 'PCN Reg #049281'
+      } : q)
     );
   };
 
