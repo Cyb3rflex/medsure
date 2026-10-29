@@ -204,31 +204,31 @@ export default function EmergencyBanner({
   return (
     <>
       {/* Banner on Main Clinical Dashboard */}
-      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-red-950/50 via-amber-950/40 to-slate-900 border border-amber-500/30 p-4 shadow-lg backdrop-blur-md">
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-red-500/20 border border-red-500/30 flex items-center justify-center shrink-0">
+      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-red-950/50 via-amber-950/40 to-slate-900 border border-amber-500/30 p-4 sm:p-5 shadow-lg backdrop-blur-md">
+        <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4">
+          <div className="flex items-start sm:items-center gap-3.5 min-w-0 flex-1">
+            <div className="w-10 h-10 rounded-xl bg-red-500/20 border border-red-500/30 flex items-center justify-center shrink-0 mt-0.5 sm:mt-0">
               <HeartPulse className="w-5 h-5 text-red-400 animate-pulse" />
             </div>
-            <div>
-              <div className="flex items-center gap-2">
+            <div className="min-w-0 flex-1">
+              <div className="flex items-center gap-2 flex-wrap">
                 <span className="font-bold text-white text-sm">Emergency Voice Assistant & Home Triage</span>
-                <span className="text-[10px] bg-red-500/20 text-red-300 font-semibold px-2 py-0.5 rounded-full border border-red-500/30">
+                <span className="text-[10px] bg-red-500/20 text-red-300 font-semibold px-2 py-0.5 rounded-full border border-red-500/30 shrink-0">
                   Live Guidance
                 </span>
               </div>
-              <p className="text-xs text-slate-300 mt-0.5">
+              <p className="text-xs text-slate-300 mt-1 leading-relaxed break-words">
                 Experiencing a sudden home health panic, asthma episode, or fever? Speak or describe your situation for instant clinical feedback.
               </p>
             </div>
           </div>
 
-          <div className="flex items-center gap-2 w-full sm:w-auto">
+          <div className="w-full lg:w-auto shrink-0 flex items-center justify-start lg:justify-end">
             <button
               onClick={() => setIsOpen(true)}
-              className="flex-1 sm:flex-none px-4 py-2 rounded-xl bg-gradient-to-r from-red-600 to-amber-600 hover:from-red-500 hover:to-amber-500 text-white font-semibold text-xs transition-all shadow-md flex items-center justify-center gap-2 group cursor-pointer"
+              className="w-full sm:w-auto px-4 py-2.5 rounded-xl bg-gradient-to-r from-red-600 to-amber-600 hover:from-red-500 hover:to-amber-500 text-white font-bold text-xs transition-all shadow-md flex items-center justify-center gap-2 group cursor-pointer whitespace-nowrap shrink-0"
             >
-              <Mic className="w-3.5 h-3.5 group-hover:scale-110 transition-transform" />
+              <Mic className="w-4 h-4 group-hover:scale-110 transition-transform shrink-0" />
               <span>Voice What You Are Experiencing</span>
             </button>
           </div>
@@ -244,21 +244,21 @@ export default function EmergencyBanner({
               : 'bg-emerald-950/80 border-emerald-500/50 text-emerald-100'
           }`}>
             <AlertTriangle className="w-4 h-4 shrink-0 mt-0.5" />
-            <div className="flex-1 space-y-1">
+            <div className="flex-1 min-w-0 space-y-1">
               <div className="flex items-center justify-between gap-2 flex-wrap">
-                <span className="font-bold">{feedback.urgencyTitle}</span>
+                <span className="font-bold truncate">{feedback.urgencyTitle}</span>
                 <button
                   onClick={() => setIsOpen(true)}
-                  className="underline hover:text-white font-semibold text-[11px]"
+                  className="underline hover:text-white font-semibold text-[11px] shrink-0"
                 >
                   View Full Feedback & Actions &rarr;
                 </button>
               </div>
-              <p className="text-[11px] leading-relaxed opacity-90">{feedback.feedbackMessage}</p>
+              <p className="text-[11px] leading-relaxed opacity-90 break-words">{feedback.feedbackMessage}</p>
             </div>
             <button 
               onClick={() => setFeedback(null)} 
-              className="text-slate-400 hover:text-white p-1"
+              className="text-slate-400 hover:text-white p-1 shrink-0"
               aria-label="Dismiss banner"
             >
               <X className="w-3.5 h-3.5" />
@@ -270,7 +270,7 @@ export default function EmergencyBanner({
       {/* Emergency & Voice Situation Modal */}
       {isOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/85 backdrop-blur-md animate-fade-in overflow-y-auto">
-          <div className="w-full max-w-xl glass-panel-elevated rounded-3xl p-6 sm:p-7 border border-slate-700 shadow-2xl relative my-8 max-h-[90vh] overflow-y-auto">
+          <div className="w-full max-w-xl glass-panel-elevated rounded-3xl p-5 sm:p-7 border border-slate-700 shadow-2xl relative my-8 max-h-[90vh] overflow-y-auto overflow-x-hidden">
             <button
               onClick={() => {
                 setIsOpen(false);
@@ -284,11 +284,11 @@ export default function EmergencyBanner({
               <X className="w-5 h-5" />
             </button>
 
-            <div className="flex items-center gap-3 mb-4">
+            <div className="flex items-center gap-3 mb-4 pr-10">
               <div className="w-11 h-11 rounded-2xl bg-gradient-to-br from-red-500/20 to-amber-500/20 border border-red-500/40 flex items-center justify-center shrink-0">
                 <ShieldAlert className="w-6 h-6 text-red-400" />
               </div>
-              <div>
+              <div className="min-w-0 flex-1">
                 <h3 className="text-lg font-bold text-white font-display">Voice Health Assistant & Home Triage</h3>
                 <p className="text-xs text-slate-400">Speak or describe your situation to receive instant clinical feedback and first-aid guidance</p>
               </div>
